@@ -1,0 +1,30 @@
+<div>
+    <img src="https://d2k1ftgv7pobq7.cloudfront.net/meta/c/p/res/images/trello-header-logos/76ceb1faa939ede03abacb6efacdde16/trello-logo-blue.svg" 
+     alt="Trello" class="trello-main-logo">
+
+    <section class="inner-section">
+        <div class="section-wrapper">
+            <div class="signup-form">
+                <h1>Sign up to Trello</h1>
+                <div class="sign-up-container">
+                    <input type="email" name="email" [(ngModel)]="email" id="email" class="form-field" placeholder="Enter email">
+                    <input type="password" name="password" [(ngModel)]="password" id="password" class="form-field" placeholder="Enter password">
+                    <p class="text"> By signing up, you confirm that you've read and accepted our 
+                        <a href="#" target="_blank">Terms of Service</a> and 
+                        <a href="#" target="_blank">Privacy Policy</a> .
+                    </p>
+                    <button type="button" class="btn btn-success" (click)="registerAcc()">Sign Up</button>
+                </div>
+                <form class="signup-google">
+                    <div class="login-separator">OR</div>
+                    <button type="button" class="google-button">Sign in with Google</button>
+                </form>
+                <hr>
+                <span class="bottom-form-link">
+                    <a href="#">Bạn đã có tài khoản? Đăng nhập</a>
+                </span>
+            </div>            
+        </div>
+    </section>
+</div>
+
