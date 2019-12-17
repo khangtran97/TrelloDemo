@@ -6,15 +6,36 @@
         <div class="section-wrapper">
             <div class="signup-form">
                 <h1>Sign up to Trello</h1>
-                <div class="sign-up-container">
-                    <input type="email" name="email" [(ngModel)]="email" id="email" class="form-field" placeholder="Enter email">
-                    <input type="password" name="password" [(ngModel)]="password" id="password" class="form-field" placeholder="Enter password">
+                <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="sign-up-container">
+                    <!-- <input
+                     type="email" 
+                     name="email" 
+                     class="form-field" 
+                     placeholder="Enter email"
+                     #userNameInput>
+                    <input
+                     type="password" 
+                     name="password" 
+                     class="form-field" 
+                     placeholder="Enter password"
+                     #passwordInput> -->
+                    <input formControlName="username" placeholder="Enter email" class="form-field">
+                    <!-- <div *ngIf="registerForm.get('username').hasError('required')">
+                        Please enter email!
+                    </div> -->
+                    <div *ngIf="registerForm.get('username').hasError('email') && registerForm.get('username').touched">
+                        Wrong pattern!
+                    </div>
+                    <input formControlName="password" type="password" placeholder="Enter password" class="form-field" id="password">
+                    <div *ngIf="registerForm.get('password').hasError('minlength') && registerForm.get('password').touched">
+                        Minimum 15 characters
+                    </div>
                     <p class="text"> By signing up, you confirm that you've read and accepted our 
                         <a href="#" target="_blank">Terms of Service</a> and 
                         <a href="#" target="_blank">Privacy Policy</a> .
                     </p>
-                    <button type="button" class="btn btn-success" (click)="registerAcc()">Sign Up</button>
-                </div>
+                    <button type="submit" [disabled]="registerForm.invalid" class="btn btn-success">Sign Up</button>
+                </form>
                 <form class="signup-google">
                     <div class="login-separator">OR</div>
                     <button type="button" class="google-button">Sign in with Google</button>
