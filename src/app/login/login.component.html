@@ -1,0 +1,33 @@
+<div>
+    <img src="https://d2k1ftgv7pobq7.cloudfront.net/meta/c/p/res/images/trello-header-logos/76ceb1faa939ede03abacb6efacdde16/trello-logo-blue.svg" 
+     alt="Trello" class="trello-main-logo">
+
+    <section class="inner-section">
+        <div class="section-wrapper">
+            <div class="login-form">
+                <h1>Sign up to Trello</h1>
+                <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="sign-up-container">
+                    <input formControlName="username" placeholder="Enter email" class="form-field">
+                    <div *ngIf="loginForm.get('username').hasError('email') && loginForm.get('username').touched">
+                        Wrong pattern!
+                    </div>
+                    <input formControlName="password" type="password" placeholder="Enter password" class="form-field" id="password">
+                    <div *ngIf="loginForm.get('password').hasError('minlength') && loginForm.get('password').touched">
+                        Minimum 15 characters
+                    </div>
+                    <button type="submit" [disabled]="loginForm.invalid" class="btn btn-success">Log In</button>
+                </form>
+                <form class="login-google">
+                    <div class="login-separator">OR</div>
+                    <button type="button" class="google-button">Login in with Google</button>
+                </form>
+                <hr>
+                <ul class="bottom-form-link">
+                    <li><a href="#">Không thể đăng nhập?</a></li>                    
+                    <li><a routerLink ='/register'>Đăng ký tài khoản</a></li>
+                </ul>
+            </div>            
+        </div>
+    </section>
+</div>
+

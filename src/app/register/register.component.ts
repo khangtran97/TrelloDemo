@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { User } from './user.model';
 import { RegisterService } from './register.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
@@ -12,9 +12,6 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 export class RegisterComponent implements OnInit {
   registerForm: FormGroup;
 
-  // @ViewChild('userNameInput', { static: false }) userNameInputRef: ElementRef;
-  // @ViewChild('passwordInput', { static: false }) passwordInputRef: ElementRef;
-
   constructor(private registerService: RegisterService,
               private fb: FormBuilder) {}
 
@@ -26,9 +23,6 @@ export class RegisterComponent implements OnInit {
   }
 
   onSubmit() {
-    // const ingUserName = this.userNameInputRef.nativeElement.vaue;
-    // const ingPassword = this.passwordInputRef.nativeElement.vaue;
-    // this.registerService.createUser(ingUserName, ingPassword);
     console.log(this.registerForm.value, this.registerForm.valid);
     const username = this.registerForm.controls.username.value;
     const password = this.registerForm.controls.password.value;
