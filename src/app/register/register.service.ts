@@ -18,6 +18,6 @@ export class RegisterService {
             user.id = id;
             this.users.push(user);
             this.usersUpdated.next([...this.users]);
-        })
+        });
     }
 }

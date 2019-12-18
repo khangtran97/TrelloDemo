@@ -1,6 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const session = require('express-session');
+const bcrypt = require('bcrypt');
 
 const User = require('./models/user');
 
@@ -40,6 +42,27 @@ app.post("/register", (req, res, next) => {
             userId: createdUser._id
         });
     });    
+});
+
+app.route('/login').post((req, res) => {
+    User.findOne({userName: req.body.userName}).exec((err, user) => {
+        if(err) {
+            return res.json({err})
+        } else if (!user) {
+            return res.json({ err: 'Username and Password are incorrect'})
+        }
+        bcrypt.compare(req.body.password, user.password, (err, result) => {
+            if(result === true) {
+                req.session.user = user;
+                res.status(201).json({
+                    user: user,
+                    status: 'success'
+                })                
+            } else {
+                return res.json({err: 'Username and Password are incorrect'})
+            }
+        });
+    });
 });
 
 app.get('/register', (req, res, next) => {
