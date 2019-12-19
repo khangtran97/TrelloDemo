@@ -3,12 +3,19 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const bcrypt = require('bcrypt');
+const MongoStore = require('connect-mongo')(session);
 
-const User = require('./models/user');
+// const userSchema = require('./models/user');
+const UserSchema = new mongoose.Schema({
+    userName: { type: String, require: true },
+    password: { type: String, require: true }
+});
+
+const UserModel = new mongoose.model("user", UserSchema);
 
 const app = express();
-
-mongoose.connect("mongodb+srv://khang_1:5HyIHdbXVJp5eCYp@cluster0-8f4qo.mongodb.net/node-angular?retryWrites=true&w=majority")
+const db = mongoose.connection;
+mongoose.connect("mongodb+srv://khang_1:5HyIHdbXVJp5eCYp@cluster0-8f4qo.mongodb.net/trello-angular?retryWrites=true&w=majority")
 .then(() => {
     console.log('Connected to database');
 })
@@ -31,47 +38,62 @@ app.use((req, res, next) => {
     );
     next();
 });
-app.post("/register", (req, res, next) => {
-    const user = new User({
-        userName: req.body.userName,
-        password: req.body.password
-    });
-    user.save().then(createdUser => {
-        res.status(201).json({
-            message: 'User added successfully',
-            userId: createdUser._id
-        });
-    });    
-});
+
+app.use(session({
+    secret: 'work hard',
+    resave: true,
+    saveUninitialized: false,
+    store: new MongoStore({
+        mongooseConnection: db
+    })
+}))
+
+UserSchema.methods.comparePassword = function(plaintext, callback) {
+    return callback(null, bcrypt.compareSync(plaintext, this.password));
+};
+
+app.post("/register", async (req, res) => {
+    UserModel.findOne({userName: req.body.password}, (err, user) => {
+        if(user == null) {
+            bcrypt.hash(req.body.password, 10, function(err, hash){
+                if(err) { return next(err);}
+                const user = new UserModel(req.body)
+                user.password = hash;
+                user.save((err, result) => {
+                    if(err) { return res.json({err})}
+                    res.status(200).json({user: result})
+                })
+            })
+        } else {
+            res.status(401).json({
+                err: {message: 'Email has been used'}
+            })
+        }
+    })
+})
 
 app.route('/login').post((req, res) => {
-    User.findOne({userName: req.body.userName}).exec((err, user) => {
-        if(err) {
-            return res.json({err})
-        } else if (!user) {
-            return res.json({ err: 'Username and Password are incorrect'})
+    UserModel.findOne({userName: req.body.userName}).exec((err, user) => {
+        if(!user) {
+            return res.status(400).send({ 
+                message: "The username does not exist" 
+            });
         }
         bcrypt.compare(req.body.password, user.password, (err, result) => {
             if(result === true) {
                 req.session.user = user;
-                res.status(201).json({
+                return res.status(201).json({
                     user: user,
-                    status: 'success'
+                    message: 'Login succesfull!'
                 })                
-            } else {
-                return res.json({err: 'Username and Password are incorrect'})
+            }
+            if(result === false) {
+                return res.status(400).send({
+                    message: 'Password are incorrect'
+                })
             }
         });
     });
-});
-
-app.get('/register', (req, res, next) => {
-    User.find().then(documents => {
-        res.status(200).json({
-            message: 'User fetched successfully!',
-            users: documents
-        });
-    });    
 });
 
 module.exports = app;

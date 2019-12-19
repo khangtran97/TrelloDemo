@@ -5,7 +5,7 @@
     <section class="inner-section">
         <div class="section-wrapper">
             <div class="login-form">
-                <h1>Sign up to Trello</h1>
+                <h1>Login to Trello</h1>
                 <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="sign-up-container">
                     <input formControlName="username" placeholder="Enter email" class="form-field">
                     <div *ngIf="loginForm.get('username').hasError('email') && loginForm.get('username').touched">
@@ -13,18 +13,22 @@
                     </div>
                     <input formControlName="password" type="password" placeholder="Enter password" class="form-field" id="password">
                     <div *ngIf="loginForm.get('password').hasError('minlength') && loginForm.get('password').touched">
-                        Minimum 15 characters
+                        Minimum 10 characters
                     </div>
-                    <button type="submit" [disabled]="loginForm.invalid" class="btn btn-success">Log In</button>
+                    <p class="text"> By signing up, you confirm that you've read and accepted our 
+                        <a href="#">Terms of Service</a> and 
+                        <a href="#">Privacy Policy</a> .
+                    </p>
+                    <button type="submit" [disabled]="loginForm.invalid" class="btn btn-success">Login</button>
                 </form>
-                <form class="login-google">
+                <form class="signup-google">
                     <div class="login-separator">OR</div>
                     <button type="button" class="google-button">Login in with Google</button>
                 </form>
                 <hr>
                 <ul class="bottom-form-link">
-                    <li><a href="#">Không thể đăng nhập?</a></li>                    
-                    <li><a routerLink ='/register'>Đăng ký tài khoản</a></li>
+                    <li><a href="#">Không thể đăng nhập?</a></li>
+                    <li><a routerLink="/register">Đăng ký tài khoản</a></li>
                 </ul>
             </div>            
         </div>

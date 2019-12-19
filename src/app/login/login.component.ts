@@ -21,9 +21,9 @@ export class LoginComponent implements OnInit {
     ngOnInit() {
         this.loginForm = this.fb.group({
         username: ['', [Validators.required, Validators.email]],
-        password: ['', [Validators.required, Validators.minLength(15)]]
+        password: ['', [Validators.required, Validators.minLength(10)]]
         });
-        this.returnUrl = '/dashboard';
+        // this.returnUrl = '/dashboard';
         this.authService.logout();
     }
 
@@ -33,8 +33,5 @@ export class LoginComponent implements OnInit {
         const username = this.f.username.value;
         const password = this.f.password.value;
         this.loginService.validateUser(username, password);
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('token', this.f.username.value);
-        this.router.navigate([this.returnUrl]);
     }
 }
