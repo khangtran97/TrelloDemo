@@ -7,22 +7,7 @@
             <div class="signup-form">
                 <h1>Sign up to Trello</h1>
                 <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="sign-up-container">
-                    <!-- <input
-                     type="email" 
-                     name="email" 
-                     class="form-field" 
-                     placeholder="Enter email"
-                     #userNameInput>
-                    <input
-                     type="password" 
-                     name="password" 
-                     class="form-field" 
-                     placeholder="Enter password"
-                     #passwordInput> -->
                     <input formControlName="username" placeholder="Enter email" class="form-field">
-                    <!-- <div *ngIf="registerForm.get('username').hasError('required')">
-                        Please enter email!
-                    </div> -->
                     <div *ngIf="registerForm.get('username').hasError('email') && registerForm.get('username').touched">
                         Wrong pattern!
                     </div>

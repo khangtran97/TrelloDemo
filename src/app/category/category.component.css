@@ -1,0 +1,143 @@
+div {
+    display: block;
+}
+.body-content {
+    position: absolute;
+    overflow-y: auto;
+    outline: none;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+ 
+#content {
+    flex-grow: 1;
+    position: relative;
+    overflow-y: auto;
+    outline: none;
+}
+
+/* .board-wrapper {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+} */
+
+.board-header {
+    height: auto;
+    padding: 8px 4px 4px 8px;
+    position: relative;
+    transition: padding .1s ease-in;
+}
+
+
+
+.board-main-content {
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    margin-right: 0;
+    transition: margin .1s ease-in;
+}
+/*
+.board-canvas {
+    background: linear-gradient(180deg,rgba(0,0,0,.24) 0,rgba(0,0,0,.24) 48px,transparent 80px,transparent);
+    position: relative;
+    flex-grow: 1;
+}
+
+#board {
+    user-select: none;
+    white-space: nowrap;
+    margin-bottom: 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 8px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.list-wrapper {
+    width: 272px;
+    margin: 0 4px;
+    height: 100%;
+    box-sizing: border-box;
+    display: inline-block;
+    vertical-align: top;
+    white-space: nowrap;
+    
+}
+
+.list-wrapper:first-child {
+    margin-left: 8px;
+}
+
+.list {
+    background-color: gray;
+    border-radius: 3px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    max-height: 100%;
+    position: relative;
+    white-space: normal;
+}
+
+.list-header {
+    flex: 0 0 auto;
+    padding: 10px 8px;
+    position: relative;
+    min-height: 20px;
+} */
+
+
+.list-wrapper {
+    margin: 0 4px;
+    box-sizing: border-box;
+    display: inline-block;
+    vertical-align: top;
+    white-space: nowrap;
+    flex-direction: row;
+    padding: 0 10px;
+}
+
+.column {
+    width: 272px;
+    max-height: 100%;
+    background-color: #ebecf0;
+    border: 1px solid #ebecf0;
+    padding: 10px 20px;
+    border-radius: 3px;
+    font-weight: 600;
+    color: #172b4d;
+}
+
+.list-header {
+    flex: 0 0 auto;
+    padding: 10px 8px;
+    position: relative;
+    min-height: 20px;
+}
+
+.list-option {
+    position: absolute;
+    right: 25px;
+    top: 17px;
+    z-index: 1;
+    font-size: large;
+}
+
+.dropbtn {
+    background-color: #ebecf0;
+    border-radius: 3px;
+}
+
+.dropbtn:hover {
+    cursor: pointer;
+    background-color: rgba(9,30,66,.08);
+}

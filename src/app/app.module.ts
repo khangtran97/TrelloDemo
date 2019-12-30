@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
+import { MatSelectModule } from '@angular/material/select';
+import { MatIconModule } from '@angular/material/icon';
 
 import { AppComponent } from './app.component';
 import { RegisterComponent } from './register/register.component';
@@ -11,6 +13,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LoginComponent } from './login/login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AuthGuardService as AuthGuard} from './auth/auth-guard.service';
+import { CategoryComponent } from './category/category.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'register', pathMatch: 'full'},
@@ -24,7 +27,8 @@ const routes: Routes = [
     AppComponent,
     RegisterComponent,
     LoginComponent,
-    DashboardComponent
+    DashboardComponent,
+    CategoryComponent
   ],
   imports: [
     BrowserModule,
@@ -32,7 +36,9 @@ const routes: Routes = [
     BrowserAnimationsModule,
     HttpClientModule,
     ReactiveFormsModule,
-    RouterModule.forRoot(routes)
+    RouterModule.forRoot(routes),
+    MatSelectModule,
+    MatIconModule
   ],
   providers: [],
   bootstrap: [AppComponent]

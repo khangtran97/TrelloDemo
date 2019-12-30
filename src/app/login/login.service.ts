@@ -1,5 +1,4 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Subject } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { User } from '../register/user.model';
 import { Router } from '@angular/router';
