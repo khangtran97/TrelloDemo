@@ -5,20 +5,40 @@
                 <div class="list-wrapper" *ngFor="let categ of categories">
                     <div class="list-header">
                         <div class="column">
-                            <p>{{ categ.title }}</p>
+                            <p *ngIf="!isEdit" (click)="onEditCategory()">{{ categ.title }}</p>
+                            <input *ngIf="isEdit">
                             <div class="list-option">
-                                <div class="delete-list-btn"><mat-icon>delete</mat-icon></div>
+                                <div class="delete-list-btn" (click)="onDelete(categ)"><mat-icon>delete</mat-icon></div>
                             </div>
-                        </div>                        
+                            <div class="card">
+                                <button class="btn open-add-card">
+                                    <span class="placeholder">
+                                        <mat-icon class="add-icon">add</mat-icon>
+                                        <span class="text-add-list">Add a card</span>
+                                    </span>
+                                </button>
+                            </div>                             
+                        </div>                                               
                     </div>                    
                 </div>
                 <div class="add-list-wrapper">
-                    <button class="btn open-add-list">
-                        <span class="placeholder">
-                            <span class="icon-add-list"><mat-icon class="add-icon">add</mat-icon></span>
-                            <span class="text-add-list">Add another list</span>
-                        </span>
-                    </button>
+                    <ng-container *ngIf="!isShow">
+                        <button class="btn open-add-list" (click)="onAddCategory()" *ngIf="categories.length < 10">
+                            <span class="placeholder">
+                                <mat-icon class="add-icon">add</mat-icon>
+                                <span class="text-add-list">Add another list</span>
+                            </span>
+                        </button>
+                    </ng-container>                    
+                    <ng-container *ngIf="isShow">
+                        <form [formGroup]="inputCategForm" (ngSubmit)="onSubmit()" class="input-category-form">
+                            <input formControlName="title" placeholder="Enter list title" ngDefaultControl class="form-field">
+                            <span class="control-button">
+                                <button type="submit" [disabled]="inputCategForm.invalid" class="btn btn-success">Add List</button>
+                                <div (click)="onCancelCategory()"><i class="material-icons">close</i></div>
+                            </span>
+                        </form>
+                    </ng-container>
                 </div>
             </div>
         </div>
