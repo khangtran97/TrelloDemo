@@ -18,7 +18,7 @@ export class LoginService {
             resonseData => {
                 localStorage.setItem('isLoggedIn', 'true');
                 localStorage.setItem('token', resonseData.user.userName);
-                this.router.navigate(['/dashboard']);
+                this.router.navigate(['/category']);
             },
             (err: HttpErrorResponse) => {
                 alert(err.error.message);

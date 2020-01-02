@@ -5,7 +5,7 @@ const session = require('express-session');
 const bcrypt = require('bcrypt');
 const MongoStore = require('connect-mongo')(session);
 
-// const userSchema = require('./models/user');
+const CategSchema = require('./models/category');
 const UserSchema = new mongoose.Schema({
     userName: { type: String, require: true },
     password: { type: String, require: true }
