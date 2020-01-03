@@ -15,11 +15,10 @@
                             <div class="column">
 
                                 <p *ngIf="!categories[i].editing" (click)="onEditingCategory(i)">{{ categ.title }}</p>
-                                <!-- <input *ngIf="isEdit"> -->
                                 <input class="inputEdit" *ngIf="categories[i].editing" [(ngModel)]="categories[i].title" (focusout)="onEditCategory(i,categ.title)" autofocus>
 
                                 <div class="list-option">
-                                    <div class="delete-list-btn" (click)="onDelete(categ)"><mat-icon>delete</mat-icon></div>
+                                    <div class="delete-list-btn" (click)="onDelete()"><mat-icon>delete</mat-icon></div>
                                 </div>
                                 <div class="card">
                                     <button class="btn open-add-card">

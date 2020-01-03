@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Category } from './category.model';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Subject } from 'rxjs';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { Subject, Subscription } from 'rxjs';
+import { CategoryService } from './category.service';
 
 class ViewCategory implements Category{
     id: string;
@@ -17,23 +18,36 @@ class ViewCategory implements Category{
 export class CategoryComponent implements OnInit{
     public isEdit: boolean = false;
     public isShow: boolean = false;
+    categoriesData: Category[] = [];
     private categUpdated = new Subject<Category[]>();
     inputCategForm: FormGroup;
-    private categories: ViewCategory[] = [
-        {id: null, title: 'To Do', editing: false},
-        {id: null, title: 'Doing', editing: false},
-        {id: null, title: 'Done', editing: false}
-    ];
+    private categories: ViewCategory[] = [];
+    // private categories: ViewCategory[] = [
+    //     {id: null, title: 'To Do', editing: false},
+    //     {id: null, title: 'Doing', editing: false},
+    //     {id: null, title: 'Done', editing: false}
+    // ];
 
-    constructor(private fb: FormBuilder) {}
+    constructor(private fb: FormBuilder,
+                private categService: CategoryService) {}
+
+    // constructor(private categService: CategoryService) {}
 
     ngOnInit() {
         this.inputCategForm = this.fb.group({
-            title: ['', [Validators.required]]
+            title: ['', [Validators.required, Validators.minLength(3)]]
         });
+        let category: Category;
+        this.categService.getCategory();
+        this.categService.categoriesUpdated.subscribe(item => {
+            const items = item.categories;
+            for (let i = 0; i < items.length; i++) {
+                category = { id: items[i].id, title: items[i].title };
+                this.categories.push({ ...category, editing: false });
+            }
+        });
+        console.log(this.categories);
     }
-
-    get f() { return this.inputCategForm.controls; }
 
     onAddCategory() {
         this.isShow = true;
@@ -55,14 +69,17 @@ export class CategoryComponent implements OnInit{
     }
 
     onCreate() {
-        const title1 = this.f.title.value;
-        const categ: Category = { id: null, title: title1 };
-        this.categories.push({...categ, editing: false});
-        this.categUpdated.next([...this.categories]);
+        // const title1 = this.f.title.value;
+        // const categ: Category = { id: null, title: title1 };
+        // this.categories.push({...categ, editing: false});
+        // this.categUpdated.next([...this.categories]);
+        this.categService.createCategory(
+            this.inputCategForm.get('title').value
+        );
         this.onCancelCategory();
     }
 
-    onDelete(categ: Category) {
-        this.categories.splice(this.categories.indexOf({...categ, editing: false}), 1);
+    onDelete(categId: string) {
+        this.categService.deleteCategory(categId);
     }
 }

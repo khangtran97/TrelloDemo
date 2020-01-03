@@ -5,7 +5,7 @@ const session = require('express-session');
 const bcrypt = require('bcrypt');
 const MongoStore = require('connect-mongo')(session);
 
-const CategSchema = require('./models/category');
+const Category = require('./models/category');
 const UserSchema = new mongoose.Schema({
     userName: { type: String, require: true },
     password: { type: String, require: true }
@@ -53,7 +53,7 @@ UserSchema.methods.comparePassword = function(plaintext, callback) {
 };
 
 app.post("/register", async (req, res) => {
-    UserModel.findOne({userName: req.body.password}, (err, user) => {
+    UserModel.findOne({userName: req.body.userName}, (err, user) => {
         if(user == null) {
             bcrypt.hash(req.body.password, 10, function(err, hash){
                 if(err) { return next(err);}
@@ -95,5 +95,54 @@ app.route('/login').post((req, res) => {
         });
     });
 });
+
+app.route('/category').get((req, res, next) => {
+    Category.find().then(data => {
+      res.status(200).json({
+        message: "Categories retrieved successfully!",
+        categories: data
+      });
+    });
+  });
+
+app.route('/category').post((req, res, next) => {
+    const category = new Category({
+        title: req.body.title
+    });
+    category.save().then(createdCategory => {
+        res.status(201).json({
+          message: "Category added successfully",
+          category: {
+            id: createdCategory._id,
+            title: createdCategory.title
+          }
+        });
+    }).catch(err => {
+        console.log(err),
+        res.status(500).json({
+            error: err
+        });
+    })
+})
+
+app.route('/category/:id').delete((req, res, next) => {
+    Category.deleteOne({ _id: req.params.id}).then(result => {
+        if(!result) {
+            return res.status(404).send({
+                message: "category not found with id " + req.body.id
+            });
+        }
+        res.status(200).send({message: "category deleted successfully!"});
+    }).catch(err => {
+        if(err.kind === 'ObjectId' || err.name === 'NotFound') {
+            return res.status(404).send({
+                message: "Category not found with id " + req.body.id
+            });                
+        }
+        return res.status(500).send({
+            message: "Could not delete category with id " + req.body.id
+        });
+    });
+})
 
 module.exports = app;
