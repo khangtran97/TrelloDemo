@@ -34,7 +34,7 @@ app.use((req, res, next) => {
     );
     res.setHeader(
         "Access-Control-Allow-Methods",
-        "GET, POST, PATCH, DELETE, OPTION"
+        "GET, POST, PUT, PATCH, DELETE, OPTION"
     );
     next();
 });
@@ -128,21 +128,41 @@ app.route('/category').post((req, res, next) => {
 app.route('/category/:id').delete((req, res, next) => {
     Category.deleteOne({ _id: req.params.id}).then(result => {
         if(!result) {
-            return res.status(404).send({
+            return res.status(404).json({
                 message: "category not found with id " + req.body.id
             });
         }
-        res.status(200).send({message: "category deleted successfully!"});
+        res.status(200).json({message: "category deleted successfully!"});
     }).catch(err => {
         if(err.kind === 'ObjectId' || err.name === 'NotFound') {
-            return res.status(404).send({
+            return res.status(404).json({
                 message: "Category not found with id " + req.body.id
             });                
         }
-        return res.status(500).send({
+        return res.status(500).json({
             message: "Could not delete category with id " + req.body.id
         });
     });
+})
+
+app.route('/category/:id').put((req, res) => {
+    Category.findByIdAndUpdate(req.params.id, req.body).then(result => {
+        if(!result) {
+            return res.status(404).json({
+                message: "Category not found with id " + req.body.id
+            });
+        }
+        res.status(200).json({message: "Category updated succeccfully!"});
+    }).catch(err => {
+        if(err.kind === 'ObjectId' || err.name === 'NotFound') {
+            return res.status(404).json({
+                message: "Category not found with id " + req.body.id
+            });                
+        }
+        return res.status(500).json({
+            message: "Could not update category with id " + req.body.id
+        });
+    })
 })
 
 module.exports = app;

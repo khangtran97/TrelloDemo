@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, OnChanges, ChangeDetectorRef } from '@angular/core';
 import { Category } from './category.model';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Subject, Subscription } from 'rxjs';
 import { CategoryService } from './category.service';
 
-class ViewCategory implements Category{
+class ViewCategory implements Category {
     id: string;
     title: string;
     editing: boolean = false;
@@ -15,71 +15,76 @@ class ViewCategory implements Category{
     templateUrl: './category.component.html',
     styleUrls: ['./category.component.css']
 })
-export class CategoryComponent implements OnInit{
+export class CategoryComponent implements OnInit, OnDestroy, OnChanges {
     public isEdit: boolean = false;
-    public isShow: boolean = false;
+    public isShowAddList: boolean = false;
     categoriesData: Category[] = [];
     private categUpdated = new Subject<Category[]>();
     inputCategForm: FormGroup;
     private categories: ViewCategory[] = [];
-    // private categories: ViewCategory[] = [
-    //     {id: null, title: 'To Do', editing: false},
-    //     {id: null, title: 'Doing', editing: false},
-    //     {id: null, title: 'Done', editing: false}
-    // ];
+    private categoriesSub: Subscription;
+
 
     constructor(private fb: FormBuilder,
-                private categService: CategoryService) {}
-
-    // constructor(private categService: CategoryService) {}
+                private categService: CategoryService,
+                private ref: ChangeDetectorRef) {}
 
     ngOnInit() {
         this.inputCategForm = this.fb.group({
             title: ['', [Validators.required, Validators.minLength(3)]]
         });
-        let category: Category;
         this.categService.getCategory();
-        this.categService.categoriesUpdated.subscribe(item => {
+        this.categoriesSub = this.categService.getPostUpdateListener().subscribe(item => {
             const items = item.categories;
+            let arrayCategories = [];
             for (let i = 0; i < items.length; i++) {
-                category = { id: items[i].id, title: items[i].title };
-                this.categories.push({ ...category, editing: false });
+                arrayCategories.push({ id: items[i].id, title: items[i].title, editing: false });
             }
+            this.categories = arrayCategories;
+            this.ref.detectChanges();
         });
-        console.log(this.categories);
+    }
+
+    ngOnChanges() {
+
     }
 
     onAddCategory() {
-        this.isShow = true;
+        this.isShowAddList = true;
     }
 
     onCancelCategory() {
-        this.isShow = false;
+        this.isShowAddList = false;
         this.inputCategForm.reset();
     }
 
     onEditingCategory(index) {
         this.categories[index].editing = true;
-        // this.isEdit = true;
     }
 
     onEditCategory(index, newvalue) {
         this.categories[index].title = newvalue;
         this.categories[index].editing = false;
+        this.categService.updateCategory(this.categories[index].id, newvalue);
     }
 
     onCreate() {
-        // const title1 = this.f.title.value;
-        // const categ: Category = { id: null, title: title1 };
-        // this.categories.push({...categ, editing: false});
-        // this.categUpdated.next([...this.categories]);
         this.categService.createCategory(
-            this.inputCategForm.get('title').value
-        );
-        this.onCancelCategory();
+            this.inputCategForm.get('title').value,
+            () => {
+                this.categService.getCategory();
+                this.onCancelCategory();
+            });
     }
 
-    onDelete(categId: string) {
-        this.categService.deleteCategory(categId);
+    onDelete(index, categId) {
+        this.categories[index].id = categId;
+        this.categService.deleteCategory(categId).subscribe(() => {
+            this.categService.getCategory();
+        });
+    }
+
+    ngOnDestroy() {
+        this.categoriesSub.unsubscribe();
     }
 }

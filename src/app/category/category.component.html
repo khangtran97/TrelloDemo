@@ -14,25 +14,18 @@
                         <div class="list-header">
                             <div class="column">
 
-                                <p *ngIf="!categories[i].editing" (click)="onEditingCategory(i)">{{ categ.title }}</p>
+                                <p class="category-title" *ngIf="!categories[i].editing" (click)="onEditingCategory(i)">{{ categ.title }}</p>
                                 <input class="inputEdit" *ngIf="categories[i].editing" [(ngModel)]="categories[i].title" (focusout)="onEditCategory(i,categ.title)" autofocus>
 
                                 <div class="list-option">
-                                    <div class="delete-list-btn" (click)="onDelete()"><mat-icon>delete</mat-icon></div>
+                                    <div class="delete-list-btn" (click)="onDelete(i,categ.id)"><mat-icon>delete</mat-icon></div>
                                 </div>
-                                <div class="card">
-                                    <button class="btn open-add-card">
-                                        <span class="placeholder">
-                                            <mat-icon class="add-icon">add</mat-icon>
-                                            <span class="text-add-list">Add a card</span>
-                                        </span>
-                                    </button>
-                                </div>                             
+                                <app-card></app-card>                          
                             </div>                                               
                         </div>                    
                     </div>
                     <div class="add-list-wrapper">
-                        <ng-container *ngIf="!isShow">
+                        <ng-container *ngIf="!isShowAddList">
                             <button class="btn open-add-list" (click)="onAddCategory()" *ngIf="categories.length < 10">
                                 <span class="placeholder">
                                     <mat-icon class="add-icon">add</mat-icon>
@@ -40,7 +33,7 @@
                                 </span>
                             </button>
                         </ng-container>                    
-                        <ng-container *ngIf="isShow">
+                        <ng-container *ngIf="isShowAddList">
                             <form [formGroup]="inputCategForm" (ngSubmit)="onCreate()" class="input-category-form">
                                 <input formControlName="title" placeholder="Enter list title" ngDefaultControl class="form-field">
                                 <span class="control-button">

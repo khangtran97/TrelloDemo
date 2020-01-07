@@ -10,7 +10,6 @@ import { Subject } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class CategoryService {
     categories: Category[] = [];
-    // private categoriesUpdated = new Subject<Category[]>();
     public categoriesUpdated = new Subject<{ categories: Category[] }>();
 
     constructor(private http: HttpClient) {}
@@ -39,17 +38,32 @@ export class CategoryService {
         });
     }
 
-    createCategory(title: string) {
+    createCategory(title: string, callback) {
         const categ: Category = {id: null, title: title };
         this.http
         .post<{ message: string, category: Category}>('http://localhost:3000/category', categ)
         .subscribe(responseData => {
-            alert('Thêm thành công!');
+            callback();
         });
+    }
+
+    getPostUpdateListener() {
+        return this.categoriesUpdated.asObservable();
     }
 
     deleteCategory(categId: string) {
         return this.http
           .delete('http://localhost:3000/category/' + categId);
+    }
+
+    updateCategory(Id: string, Title) {
+        let categData: Category;
+        categData = {
+            id: Id,
+            title: Title
+        };
+        this.http
+            .put('http://localhost:3000/category/' + Id, categData)
+            .subscribe(response => {});
     }
 }

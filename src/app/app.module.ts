@@ -15,6 +15,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { AuthGuardService as AuthGuard} from './auth/auth-guard.service';
 import { CategoryComponent } from './category/category.component';
 import { HomeComponent } from './test/test.component';
+import { CardComponent } from './category/card/card.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'register', pathMatch: 'full'},
@@ -30,6 +31,7 @@ const routes: Routes = [
     LoginComponent,
     DashboardComponent,
     CategoryComponent,
+    CardComponent,
     HomeComponent
   ],
   imports: [
