@@ -1,25 +1,33 @@
 <div class="card-list">
-    <div class="card-list-name">
-        <a class="card-title" *ngFor="let card of cards" (mouseleave)="onMouseLeave()">
-            {{ card.title}}
-            <div class="icon-edit-card" *ngIf="isEdit"><i class="material-icons">edit</i></div>
-        </a>        
+    <div class="card-list-name" *ngFor="let card of getFilteredCard();let i=index">
+        <a class="card-title" >
+            <span class="icon-edit-card"><i class="material-icons">edit</i></span>
+            <div class="list-card-details">
+                <span class="list-card-title">
+                    {{card.title}}
+                </span>
+            </div>
+        </a>
+               
     </div>
-    <ng-container *ngIf="!isShowAddCard">
-        <button class="btn open-add-card" (click)="onAddCard()">
-            <span class="placeholder">
-                <mat-icon class="add-icon">add</mat-icon>
-                <span class="text-add-card">Add a card</span>
-            </span>
-        </button>
-    </ng-container>
-    <ng-container *ngIf="isShowAddCard">
-        <form [formGroup]="inputCardForm" (ngSubmit)="onCreate()" class="input-card-form">
-            <textarea formControlName="title" placeholder="Enter a title for this card" ngDefaultControl class="form-field"></textarea>
-            <span class="control-button">
-                <button type="submit" [disabled]="inputCardForm.invalid" class="btn btn-success">Add Card</button>
-                <div class="icon-close-add-form" (click)="onCancelCard()"><i class="material-icons">close</i></div>
-            </span>
-        </form>
-    </ng-container>
+    <div class="card-composer">
+        <ng-container *ngIf="!isShowAddCard">
+            <button class="btn open-add-card" (click)="onAddCard()">
+                <span class="placeholder">
+                    <mat-icon class="add-icon">add</mat-icon>
+                    <span class="text-add-card">Add a card</span>
+                </span>
+            </button>
+        </ng-container>
+        <ng-container *ngIf="isShowAddCard" class="list-card">
+            <form [formGroup]="inputCardForm" (ngSubmit)="onCreate(category)" class="input-card-form">
+                <textarea autosize [maxRows]="7" formControlName="title" placeholder="Enter a title for this card" ngDefaultControl class="form-field"></textarea>
+                <span class="control-button">
+                    <button type="submit" [disabled]="inputCardForm.invalid" class="btn btn-success">Add Card</button>
+                    <div class="icon-close-add-form" (click)="onCancelCard()"><i class="material-icons">close</i></div>
+                </span>
+            </form>
+        </ng-container>
+    </div>  
+       
 </div>

@@ -29,22 +29,6 @@ a {
     font-size: 14px;
 }
 
-.form-field {
-    margin-top: 3px;
-    background: #fff;
-    border: none;
-    box-shadow: inset 0 0 0 2px white;
-    display: block;
-    transition: 20s;
-    width: 100%;
-    height: 54px;
-    color: #172b4d;
-    box-sizing: border-box;
-    -webkit-appearance: none;
-    border-radius: 3px;
-    padding: 8px 12px;
-}
-
 .control-button {
     display: flex;
     margin: 8px 0;
@@ -65,22 +49,7 @@ a {
     cursor: pointer;
 }
 
-.input-card-form {
-    max-height: 100%;
-    background-color: #ebecf0;
-    border: 1px solid #ebecf0;
-    margin-top: 10px;
-    padding: 0 5px;
-    border-radius: 3px;
-    font-weight: 600;
-    color: #172b4d;
-}
-
 .card-title {
-    overflow: hidden;
-    padding: 6px 8px 2px;
-    position: relative;
-
     background-color: #fff;
     border-radius: 3px;
     box-shadow: 0 1px 0 rgba(9,30,66,.25);
@@ -111,6 +80,103 @@ a {
 
 .icon-edit-card {
     float: right;
-    font-size: 14px;
+    cursor: pointer;
+    background-clip: padding-box;
+    background-origin: padding-box;
+    border-radius: 3px;
+    opacity: .8;
+    position: inherit;
+    right: 2px;
+    top: 2px;
+}
+
+.icon-edit-card .material-icons {
+    font-size: 20px;
+    padding: 3px;
+}
+
+.list-card-details {
+    overflow: hidden;
+    padding: 6px 8px 2px;
+    position: relative;
+}
+
+.list-card-title {
+    font-weight: normal;
+    float: left;
+    clear: both;
+    display: block;
+    max-width: 220px;
+    height: auto;
+    margin: 0 0 4px;
+    overflow: hidden;
+    text-decoration: none;
+    word-wrap: break-word;
+    white-space: pre-line;
+    color: #172b4d;
+}
+
+.list-card {
+    background-color: #fff;
+    border-radius: 3px;
+    box-shadow: 0 1px 0 rgba(9,30,66,.25);
+    cursor: pointer;
+    display: block;
+    margin-bottom: 8px;
+    max-width: 300px;
+    min-height: 20px;
+    position: relative;
+    text-decoration: none;
+    z-index: 0;
+}
+
+.input-card-form {
+    overflow: hidden;
+    padding: 0;
+    position: relative;
+}
+
+
+.form-field {
+    margin-top: 3px;
+    background: #fff;
+    border: none;
+    box-shadow: inset 0 0 0 2px white;
+    display: block;
+    transition: 20s;
+    width: 100%;
+    max-height: 162px;
+    min-height: 54px;
+    color: #172b4d;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    border-radius: 3px;
+    padding: 6px 8px 2px;
+    margin-bottom: 4px;
+    resize: none;
+}
+
+.quick-card-editor {
+    background: rgba(0,0,0,.6);
+    bottom: 0;
+    color: #fff;
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 10;
+}
+
+.quick-card-editor-close-icon {
+    color: hsla(0,0%,100%,.6);
+    padding: 9px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transition-property: transform,color;
+    transition-duration: .15s;
+}
+
+.card-composer {
     cursor: pointer;
 }

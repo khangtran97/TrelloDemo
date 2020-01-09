@@ -6,6 +6,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
+import { AutosizeModule } from 'ngx-autosize';
 
 import { AppComponent } from './app.component';
 import { RegisterComponent } from './register/register.component';
@@ -42,7 +43,8 @@ const routes: Routes = [
     ReactiveFormsModule,
     RouterModule.forRoot(routes),
     MatSelectModule,
-    MatIconModule
+    MatIconModule,
+    AutosizeModule
   ],
   providers: [],
   bootstrap: [AppComponent]

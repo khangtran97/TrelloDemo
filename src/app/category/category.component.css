@@ -189,7 +189,7 @@ a:hover {
 
 .list-option {
     position: absolute;
-    right: 9px;
+    right: 0;
     top: 12px;
     z-index: 1;
     font-size: large;

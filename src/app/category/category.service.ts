@@ -1,10 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { User } from '../register/user.model';
-import { Router } from '@angular/router';
 import { map } from 'rxjs/operators';
 import { Category } from './category.model';
-import { Observable, of } from 'rxjs';
 import { Subject } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
@@ -47,7 +44,7 @@ export class CategoryService {
         });
     }
 
-    getPostUpdateListener() {
+    getCategUpdateListener() {
         return this.categoriesUpdated.asObservable();
     }
 

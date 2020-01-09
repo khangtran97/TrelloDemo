@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt');
 const MongoStore = require('connect-mongo')(session);
 
 const Category = require('./models/category');
+const Card = require('./models/card');
 const UserSchema = new mongoose.Schema({
     userName: { type: String, require: true },
     password: { type: String, require: true }
@@ -103,7 +104,7 @@ app.route('/category').get((req, res, next) => {
         categories: data
       });
     });
-  });
+})
 
 app.route('/category').post((req, res, next) => {
     const category = new Category({
@@ -163,6 +164,40 @@ app.route('/category/:id').put((req, res) => {
             message: "Could not update category with id " + req.body.id
         });
     })
+})
+
+app.route('/card').post((req, res) => {
+    const card = new Card({
+        title: req.body.title,
+        category: req.body.category,
+        description: req.body.description,
+        comment: req.body.comment
+    });
+    card.save().then(createdCard => {
+        res.status(201).json({
+            message: "Card added succesfully!",
+            card: {
+                id: createdCard._id,
+                title: createdCard.title,
+                description: createdCard.description,
+                comment: createdCard.comment
+            }
+        });
+    }).catch(err => {
+        console.log(err),
+        res.status(500).json({
+            error: err
+        });
+    })
+})
+
+app.route('/card').get((req, res) => {
+    Card.find().then(data => {
+        res.status(200).json({
+            message: "Card retrieved succesfully!",
+            cards: data
+        });
+    });
 })
 
 module.exports = app;

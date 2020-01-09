@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, OnChanges, ChangeDetectorRef } from '@angular/core';
 import { Category } from './category.model';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
-import { Subject, Subscription } from 'rxjs';
+import { Subject, Subscription, Observable } from 'rxjs';
 import { CategoryService } from './category.service';
 
 class ViewCategory implements Category {
@@ -15,7 +15,7 @@ class ViewCategory implements Category {
     templateUrl: './category.component.html',
     styleUrls: ['./category.component.css']
 })
-export class CategoryComponent implements OnInit, OnDestroy, OnChanges {
+export class CategoryComponent implements OnInit, OnChanges, OnDestroy {
     public isEdit: boolean = false;
     public isShowAddList: boolean = false;
     categoriesData: Category[] = [];
@@ -23,6 +23,7 @@ export class CategoryComponent implements OnInit, OnDestroy, OnChanges {
     inputCategForm: FormGroup;
     private categories: ViewCategory[] = [];
     private categoriesSub: Subscription;
+
 
 
     constructor(private fb: FormBuilder,
@@ -34,14 +35,14 @@ export class CategoryComponent implements OnInit, OnDestroy, OnChanges {
             title: ['', [Validators.required, Validators.minLength(3)]]
         });
         this.categService.getCategory();
-        this.categoriesSub = this.categService.getPostUpdateListener().subscribe(item => {
+        this.categoriesSub = this.categService.getCategUpdateListener().subscribe(item => {
             const items = item.categories;
             let arrayCategories = [];
             for (let i = 0; i < items.length; i++) {
                 arrayCategories.push({ id: items[i].id, title: items[i].title, editing: false });
             }
             this.categories = arrayCategories;
-            this.ref.detectChanges();
+            // this.ref.detectChanges();
         });
     }
 
