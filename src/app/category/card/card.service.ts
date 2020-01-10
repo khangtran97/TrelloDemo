@@ -12,7 +12,7 @@ export class CardService {
     // public category: Category[];
     // @Input('category') category: Category;
     cards: Card[] = [];
-    public cardsUpdated = new Subject<{ cards: Category[] }>();
+    public cardsUpdated = new Subject<Card[]>();
     private categoriesSub: Subscription;
 
     constructor(private http: HttpClient,
@@ -33,7 +33,10 @@ export class CardService {
                     cards: cardData.cards.map(card => {
                         return {
                             id: card._id,
-                            title: card.title
+                            title: card.title,
+                            description: card.description,
+                            comment: card.comment,
+                            category: card.category
                         };
                     })
                 };
@@ -41,9 +44,9 @@ export class CardService {
         )
         .subscribe(transformCardData => {
             this.cards = transformCardData.cards;
-            this.cardsUpdated.next({
-                cards: [...this.cards]
-            });
+            this.cardsUpdated.next(
+                [...this.cards]
+            );
         });
     }
 
@@ -51,20 +54,31 @@ export class CardService {
         return this.cardsUpdated.asObservable();
     }
 
-    addCard(title: string, categorySelected: Category) {
+    addCard(title: string, categorySelected: Category, callback) {
         const card = { id: null, title: title, message: null, commnent: null, category: categorySelected.id };
         this.http
         .post<{message: string, card: Card}>('http://localhost:3000/card', card)
         .subscribe(responseData => {
-            console.log('Added!!!!!!!!!!');
+            callback();
         });
     }
-    // addCard(title: string, categorySelected: Category, callback) {
-    //     const card = { id: null, title: title, message: null, commnent: null, category: categorySelected.id };
-    //     this.http
-    //     .post<{message: string, card: Card}>('http://localhost:3000/card', card)
-    //     .subscribe(responseData => {
-    //         callback();
-    //     });
-    // }
+
+    updateCard(Id: string, Title, category: Category) {
+        let cardData: Card;
+        cardData = {
+            id: Id,
+            title: Title,
+            description: null,
+            comment: null,
+            category: category.id
+        };
+        this.http
+            .put('http://localhost:3000/card/' + Id, cardData)
+            .subscribe(response => {});
+    }
+
+    deleteCard(cardId: string) {
+        return this.http
+          .delete('http://localhost:3000/card/' + cardId);
+    }
 }

@@ -130,18 +130,18 @@ app.route('/category/:id').delete((req, res, next) => {
     Category.deleteOne({ _id: req.params.id}).then(result => {
         if(!result) {
             return res.status(404).json({
-                message: "category not found with id " + req.body.id
+                message: "card not found with id " + req.body.id
             });
         }
-        res.status(200).json({message: "category deleted successfully!"});
+        res.status(200).json({message: "card deleted successfully!"});
     }).catch(err => {
         if(err.kind === 'ObjectId' || err.name === 'NotFound') {
             return res.status(404).json({
-                message: "Category not found with id " + req.body.id
+                message: "card not found with id " + req.body.id
             });                
         }
         return res.status(500).json({
-            message: "Could not delete category with id " + req.body.id
+            message: "Could not delete card with id " + req.body.id
         });
     });
 })
@@ -196,6 +196,46 @@ app.route('/card').get((req, res) => {
         res.status(200).json({
             message: "Card retrieved succesfully!",
             cards: data
+        });
+    });
+})
+
+app.route('/card/:id').put((req, res) => {
+    Category.findByIdAndUpdate(req.params.id, req.body).then(result => {
+        if(!result) {
+            return res.status(404).json({
+                message: "Card not found with id " + req.body.id
+            });
+        }
+        res.status(200).json({message: "Card updated succeccfully!"});
+    }).catch(err => {
+        if(err.kind === 'ObjectId' || err.name === 'NotFound') {
+            return res.status(404).json({
+                message: "Card not found with id " + req.body.id
+            });                
+        }
+        return res.status(500).json({
+            message: "Could not update Card with id " + req.body.id
+        });
+    })
+})
+
+app.route('/card/:id').delete((req, res, next) => {
+    Category.deleteOne({ _id: req.params.id}).then(result => {
+        if(!result) {
+            return res.status(404).json({
+                message: "category not found with id " + req.body.id
+            });
+        }
+        res.status(200).json({message: "category deleted successfully!"});
+    }).catch(err => {
+        if(err.kind === 'ObjectId' || err.name === 'NotFound') {
+            return res.status(404).json({
+                message: "Category not found with id " + req.body.id
+            });                
+        }
+        return res.status(500).json({
+            message: "Could not delete category with id " + req.body.id
         });
     });
 })

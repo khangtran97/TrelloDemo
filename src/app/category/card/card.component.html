@@ -1,14 +1,32 @@
 <div class="card-list">
-    <div class="card-list-name" *ngFor="let card of getFilteredCard();let i=index">
+    <div class="card-list-name" *ngFor="let card of cards;let i = index">
         <a class="card-title" >
-            <span class="icon-edit-card"><i class="material-icons">edit</i></span>
-            <div class="list-card-details">
-                <span class="list-card-title">
-                    {{card.title}}
-                </span>
+            <div class="card-title-info">
+                <span class="icon-edit-card" *ngIf="!cards[i].editing" (click)="onEditingCard(i)"><i class="material-icons">edit</i></span>
+                <div class="list-card-details" *ngIf="!cards[i].editing">
+                    <span class="list-card-title">
+                        {{card.title}}
+                    </span>
+                </div>
+                <ng-container *ngIf="cards[i].editing">
+                    <form [formGroup]="inputEditCardForm" (ngSubmit)="onEditCard(i, card.title, category)" class="input-card-edit-form">
+                        <textarea formControlName="textCardEdit"
+                                  autosize [maxRows]="7"
+                                  *ngIf="cards[i].editing"
+                                  class="editCardTitle"
+                                  [ngModel]="card.title"
+                                  ngDefaultControl autofocus></textarea>
+                        <!-- <input formControlName="inputEditCard" [(ngModel)]="card.title" class="editCardTitle"> -->
+                        <span class="control-button">
+                            <button type="submit" [disabled]="inputEditCardForm.invalid" class="btn btn-success">Save</button>
+                            <button type="button" class="btn btn-danger" (click)="onDeleteCard(i,card.id)">Delete</button>
+                            <div (click)="onCancelEditCard(i)"><i class="material-icons">close</i></div>
+                        </span>
+                    </form>
+                </ng-container>
             </div>
+            
         </a>
-               
     </div>
     <div class="card-composer">
         <ng-container *ngIf="!isShowAddCard">

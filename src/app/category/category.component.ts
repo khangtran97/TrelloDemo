@@ -31,9 +31,9 @@ export class CategoryComponent implements OnInit, OnChanges, OnDestroy {
                 private ref: ChangeDetectorRef) {}
 
     ngOnInit() {
-        this.inputCategForm = this.fb.group({
-            title: ['', [Validators.required, Validators.minLength(3)]]
-        });
+        // this.inputCategForm = this.fb.group({
+        //     title: ['', [Validators.required, Validators.minLength(3)]]
+        // });
         this.categService.getCategory();
         this.categoriesSub = this.categService.getCategUpdateListener().subscribe(item => {
             const items = item.categories;
@@ -42,7 +42,6 @@ export class CategoryComponent implements OnInit, OnChanges, OnDestroy {
                 arrayCategories.push({ id: items[i].id, title: items[i].title, editing: false });
             }
             this.categories = arrayCategories;
-            // this.ref.detectChanges();
         });
     }
 

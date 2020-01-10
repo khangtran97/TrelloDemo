@@ -5,6 +5,15 @@ import { Category } from '../category.model';
 import { CardService } from './card.service';
 import { Subscription } from 'rxjs';
 
+class ViewCard implements Card {
+    id: string;
+    title: string;
+    description: string;
+    comment: string;
+    category: string;
+    editing: boolean = false;
+}
+
 @Component({
     selector: 'app-card',
     templateUrl: './card.component.html',
@@ -13,22 +22,15 @@ import { Subscription } from 'rxjs';
 
 export class CardComponent implements OnInit {
     public isShowAddCard: boolean = false;
-    public isEdit: boolean = false;
+    public isEditCard: boolean = false;
     inputCardForm: FormGroup;
+    inputEditCardForm: FormGroup;
+    isShowEditDelete: boolean = false;
+    public cards: ViewCard[] = [];
+    private cardsSub: Subscription;
+    cardsByCategoryID: Card[];
 
     @Input('category') category: Category;
-
-    // public cards: Card[] = [
-    //     { id: null, title: 'ABC', description: 'fsdf', comment: null, category: '5e1553dde56c011d64344445' },
-    //     { id: null, title: 'DEF', description: 'fsdf', comment: null, category: '5e169248da279b1548514067' },
-    //     { id: null, title: 'GHI', description: 'fsdf', comment: null, category: '5e169248da279b1548514067' }
-    // ];
-    public cards: Card[] = [];
-    private cardsSub: Subscription;
-
-    getFilteredCard() {
-        return this.cards.filter(card => card.category === this.category.id);
-    }
 
     constructor(private cardService: CardService,
                 private fb: FormBuilder) {}
@@ -37,9 +39,23 @@ export class CardComponent implements OnInit {
         this.inputCardForm = this.fb.group({
             title: ['', [Validators.required, Validators.minLength(3)]]
         });
+        this.inputEditCardForm = this.fb.group({
+            textCardEdit: ['', [Validators.required, Validators.minLength(3)]]
+        });
         this.cardService.getCards();
         this.cardsSub = this.cardService.getCardUpdateListener().subscribe(data => {
-            console.log(data);
+            let arrayCard = [];
+            for (let i = 0; i< data.length; i++) {
+                arrayCard.push({
+                    id: data[i].id,
+                    title: data[i].title,
+                    description: data[i].description,
+                    comment: data[i].comment,
+                    category: data[i].category,
+                    editing: false
+                });
+            }
+            this.cards = arrayCard.filter(card => card.category === this.category.id);
         });
     }
 
@@ -47,14 +63,48 @@ export class CardComponent implements OnInit {
         this.isShowAddCard = true;
     }
 
-
-
     onCancelCard() {
         this.isShowAddCard = false;
         this.inputCardForm.reset();
     }
 
-    onCreate(category) {
-        this.cardService.addCard(this.inputCardForm.value.title, category);
+    onCancelEditCard(index) {
+        this.cards[index].editing = false;
+        this.inputEditCardForm.reset();
     }
+
+    onEditingCard(index) {
+        this.cards[index].editing = true;
+    }
+
+    onEditCard(index, newvalue, category: Category) {
+        this.cards[index].title = newvalue;
+        console.log(newvalue);
+        this.cards[index].editing = false;
+        this.cardService.updateCard(this.cards[index].id, newvalue, category);
+    }
+
+    onCreate(category) {
+        this.cardService.addCard(
+            this.inputCardForm.value.title,
+            category,
+            () => {
+                this.cardService.getCards();
+                this.onCancelCard();
+            }
+        );
+    }
+
+    onDeleteCard(index, cardId) {
+        this.cards[index].id = cardId;
+        console.log(index);
+        console.log(cardId);
+        this.cardService.deleteCard(cardId).subscribe(() => {
+            this.cardService.getCards();
+        });
+    }
+
+    // onEditCard() {
+    //     this.isShowEditDelete = true;
+    // }
 }
