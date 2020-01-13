@@ -9,8 +9,6 @@ import { Category } from '../category.model';
 @Injectable({ providedIn: 'root'})
 
 export class CardService {
-    // public category: Category[];
-    // @Input('category') category: Category;
     cards: Card[] = [];
     public cardsUpdated = new Subject<Card[]>();
     private categoriesSub: Subscription;
@@ -63,7 +61,7 @@ export class CardService {
         });
     }
 
-    updateCard(Id: string, Title, category: Category) {
+    updateCard(Id: string, Title, category: Category, callback) {
         let cardData: Card;
         cardData = {
             id: Id,
@@ -74,7 +72,9 @@ export class CardService {
         };
         this.http
             .put('http://localhost:3000/card/' + Id, cardData)
-            .subscribe(response => {});
+            .subscribe(response => {
+                callback();
+            });
     }
 
     deleteCard(cardId: string) {

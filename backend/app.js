@@ -201,7 +201,7 @@ app.route('/card').get((req, res) => {
 })
 
 app.route('/card/:id').put((req, res) => {
-    Category.findByIdAndUpdate(req.params.id, req.body).then(result => {
+    Card.findByIdAndUpdate(req.params.id, req.body).then(result => {
         if(!result) {
             return res.status(404).json({
                 message: "Card not found with id " + req.body.id
@@ -221,7 +221,7 @@ app.route('/card/:id').put((req, res) => {
 })
 
 app.route('/card/:id').delete((req, res, next) => {
-    Category.deleteOne({ _id: req.params.id}).then(result => {
+    Card.deleteOne({ _id: req.params.id}).then(result => {
         if(!result) {
             return res.status(404).json({
                 message: "category not found with id " + req.body.id

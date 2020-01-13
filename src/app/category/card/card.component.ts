@@ -77,11 +77,15 @@ export class CardComponent implements OnInit {
         this.cards[index].editing = true;
     }
 
-    onEditCard(index, newvalue, category: Category) {
-        this.cards[index].title = newvalue;
-        console.log(newvalue);
+    onEditCard(index, category: Category) {
         this.cards[index].editing = false;
-        this.cardService.updateCard(this.cards[index].id, newvalue, category);
+        this.cardService.updateCard(
+            this.cards[index].id,
+            this.inputEditCardForm.get('textCardEdit').value,
+            category,
+            () => {
+                this.cardService.getCards();
+            });
     }
 
     onCreate(category) {
@@ -97,14 +101,9 @@ export class CardComponent implements OnInit {
 
     onDeleteCard(index, cardId) {
         this.cards[index].id = cardId;
-        console.log(index);
-        console.log(cardId);
         this.cardService.deleteCard(cardId).subscribe(() => {
             this.cardService.getCards();
-        });
+        },
+        (err) => console.log(err));
     }
-
-    // onEditCard() {
-    //     this.isShowEditDelete = true;
-    // }
 }

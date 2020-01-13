@@ -9,7 +9,7 @@
                     </span>
                 </div>
                 <ng-container *ngIf="cards[i].editing">
-                    <form [formGroup]="inputEditCardForm" (ngSubmit)="onEditCard(i, card.title, category)" class="input-card-edit-form">
+                    <form [formGroup]="inputEditCardForm" (ngSubmit)="onEditCard(i,category)" class="input-card-edit-form">
                         <textarea formControlName="textCardEdit"
                                   autosize [maxRows]="7"
                                   *ngIf="cards[i].editing"
