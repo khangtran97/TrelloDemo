@@ -1,0 +1,48 @@
+<div class="card-comment">
+    <div class="member">
+      <span class="member-name">DT</span>                                               
+    </div>
+    <div class="member-comment">
+      <input *ngIf="!isShowAddComment" class="input-comment" placeholder="Write a comment" (click)="ShowAddComment()">
+      <ng-container *ngIf="isShowAddComment" class="member-form">
+          <form [formGroup]="inputMemberCardForm" (ngSubmit)="onAddComment(card)" class="input-member-card-form">
+              <textarea formControlName="textComment"
+                        autosize
+                        class="text-comment"
+                        placeholder="Write a comment"
+                        ngDefaultControl (focusout)="ShowAddComment()" autofocus></textarea>
+              <span class="control-button">
+                  <button type="submit" [disabled]="inputMemberCardForm.invalid" class="btn btn-success">Save</button>
+              </span>
+          </form>
+      </ng-container>                        
+    </div>
+</div>
+<div class="card-comment-list">
+    <div class="comment-type">
+        <div class="comment-creator">
+            <span class="member-name">DT</span>
+        </div>
+        <div class="comment-desc">
+            <span class="comment-desc-member">
+                Duc Khang Tran
+            </span>
+            <div class="comment-desc-container">
+                <div class="comment-desc-wrap">
+                    <div class="comment-desc-content">
+                        <p>shgklsdgklsdjklgjskldfjgksdkfjglsjdf</p>
+                    </div>                    
+                </div>
+                <div class="comment-desc-edit">
+                    <span class="comment-desc-editdel">
+                        <a class="edit-action" >Edit</a> - 
+                        <a class="delete-action">Delete</a>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="comment-reaction">
+
+        </div>
+    </div>
+</div>

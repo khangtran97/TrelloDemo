@@ -17,6 +17,8 @@ import { AuthGuardService as AuthGuard} from './auth/auth-guard.service';
 import { CategoryComponent } from './category/category.component';
 import { HomeComponent } from './test/test.component';
 import { CardComponent } from './category/card/card.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { CommentComponent } from './category/card/comment/comment.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'register', pathMatch: 'full'},
@@ -33,7 +35,8 @@ const routes: Routes = [
     DashboardComponent,
     CategoryComponent,
     CardComponent,
-    HomeComponent
+    HomeComponent,
+    CommentComponent
   ],
   imports: [
     BrowserModule,
@@ -44,7 +47,8 @@ const routes: Routes = [
     RouterModule.forRoot(routes),
     MatSelectModule,
     MatIconModule,
-    AutosizeModule
+    AutosizeModule,
+    NgbModule
   ],
   providers: [],
   bootstrap: [AppComponent]

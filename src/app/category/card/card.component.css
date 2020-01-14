@@ -200,3 +200,30 @@ a {
 .card-composer {
     cursor: pointer;
 }
+
+.modal-header {
+    background-color: #ebecf0;
+}
+
+.modal-body {
+    background-color: #ebecf0;
+}
+
+.icon-modal-title {
+    font-size: 20px;
+    color: #42526e;
+}
+
+.card-modal-title {
+    margin: -3px 4px 2px;
+}
+
+.card-modal-category {
+    cursor: default;
+    display: inline-block;
+    margin: 4px 8px 4px 2px;
+}
+
+.current-list {
+    display: inline-block;
+}

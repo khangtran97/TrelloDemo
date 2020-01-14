@@ -4,6 +4,7 @@ import { Card } from './card.model';
 import { Category } from '../category.model';
 import { CardService } from './card.service';
 import { Subscription } from 'rxjs';
+import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
 
 class ViewCard implements Card {
     id: string;
@@ -26,6 +27,8 @@ export class CardComponent implements OnInit {
     inputCardForm: FormGroup;
     inputEditCardForm: FormGroup;
     isShowEditDelete: boolean = false;
+    isShowAddComment: boolean = false;
+    inputMemberCardForm: FormGroup;
     public cards: ViewCard[] = [];
     private cardsSub: Subscription;
     cardsByCategoryID: Card[];
@@ -33,7 +36,8 @@ export class CardComponent implements OnInit {
     @Input('category') category: Category;
 
     constructor(private cardService: CardService,
-                private fb: FormBuilder) {}
+                private fb: FormBuilder,
+                private modalService: NgbModal) {}
 
     ngOnInit() {
         this.inputCardForm = this.fb.group({
@@ -105,5 +109,23 @@ export class CardComponent implements OnInit {
             this.cardService.getCards();
         },
         (err) => console.log(err));
+    }
+
+    openLg(content) {
+        this.modalService.open(content, { size: 'lg' }).result.then(
+            (result) => {
+                this.isShowAddComment = this.closeModal(result);
+            }, (reason) => {
+                this.isShowAddComment = this.closeModal(reason);
+            }
+        );
+    }
+
+    private closeModal(reason: any): boolean {
+        if (reason === ModalDismissReasons.BACKDROP_CLICK) {
+            return false;
+        } else if (reason === ModalDismissReasons.ESC) {
+            return false;
+        }
     }
 }

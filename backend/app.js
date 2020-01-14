@@ -7,6 +7,7 @@ const MongoStore = require('connect-mongo')(session);
 
 const Category = require('./models/category');
 const Card = require('./models/card');
+const Comment = require('./models/comment');
 const UserSchema = new mongoose.Schema({
     userName: { type: String, require: true },
     password: { type: String, require: true }
@@ -236,6 +237,51 @@ app.route('/card/:id').delete((req, res, next) => {
         }
         return res.status(500).json({
             message: "Could not delete category with id " + req.body.id
+        });
+    });
+    Comment.dele
+})
+
+app.route('/comment').post((req, res, next) => {
+    const comment = new Comment({
+        content: req.body.content,
+        card: req.body.card,
+        user: req.body.user
+    });
+    comment.save().then(createdComment => {
+        res.status(201).json({
+            message: "Comment added succesfully!",
+            card: {
+                id: createdComment._id,
+                content: createdComment.content,
+                card: createdComment.card,
+                user: createdComment.user
+            }
+        });
+    }).catch(err => {
+        console.log(err),
+        res.status(500).json({
+            error: err
+        });
+    })
+})
+
+app.route('/comment/:id').delete((req, res, next) => {
+    Comment.deleteOne({ _id: req.params.id}).then(result => {
+        if(!result) {
+            return res.status(404).json({
+                message: "comment not found with id " + req.body.id
+            });
+        }
+        res.status(200).json({message: "comment deleted successfully!"});
+    }).catch(err => {
+        if(err.kind === 'ObjectId' || err.name === 'NotFound') {
+            return res.status(404).json({
+                message: "comment not found with id " + req.body.id
+            });                
+        }
+        return res.status(500).json({
+            message: "Could not delete comment with id " + req.body.id
         });
     });
 })

@@ -1,9 +1,9 @@
 <div class="card-list">
     <div class="card-list-name" *ngFor="let card of cards;let i = index">
-        <a class="card-title" >
+        <a class="card-title">
             <div class="card-title-info">
                 <span class="icon-edit-card" *ngIf="!cards[i].editing" (click)="onEditingCard(i)"><i class="material-icons">edit</i></span>
-                <div class="list-card-details" *ngIf="!cards[i].editing">
+                <div class="list-card-details" *ngIf="!cards[i].editing" (click)="openLg(cardmodal)">
                     <span class="list-card-title">
                         {{card.title}}
                     </span>
@@ -12,11 +12,9 @@
                     <form [formGroup]="inputEditCardForm" (ngSubmit)="onEditCard(i,category)" class="input-card-edit-form">
                         <textarea formControlName="textCardEdit"
                                   autosize [maxRows]="7"
-                                  *ngIf="cards[i].editing"
                                   class="editCardTitle"
                                   [ngModel]="card.title"
                                   ngDefaultControl autofocus></textarea>
-                        <!-- <input formControlName="inputEditCard" [(ngModel)]="card.title" class="editCardTitle"> -->
                         <span class="control-button">
                             <button type="submit" [disabled]="inputEditCardForm.invalid" class="btn btn-success">Save</button>
                             <button type="button" class="btn btn-danger" (click)="onDeleteCard(i,card.id)">Delete</button>
@@ -24,9 +22,33 @@
                         </span>
                     </form>
                 </ng-container>
-            </div>
-            
+            </div>            
         </a>
+        <div>
+            <ng-template #cardmodal let-modal>
+                <div class="modal-header">
+                    <div class="icon-modal-title">
+                        <span><i class="material-icons">list</i></span>
+                    </div>                    
+                    <div class="modal-title card-modal-title">
+                        <h4>{{ cards[i].title}}</h4>
+                    </div>
+                    <div class="card-modal-category">
+                        <p class="current-list">in list <a href="#"> {{category.title}}</a>
+                        </p>
+                    </div>
+                    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">                  
+                  <app-comment [cardSelected]="card"></app-comment>
+                </div>
+                <!-- <div class="modal-footer">
+                  <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
+                </div> -->
+            </ng-template>   
+        </div>
     </div>
     <div class="card-composer">
         <ng-container *ngIf="!isShowAddCard">
@@ -46,6 +68,7 @@
                 </span>
             </form>
         </ng-container>
-    </div>  
-       
+    </div> 
+    
 </div>
+
