@@ -3,6 +3,7 @@ import { Category } from './category.model';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Subject, Subscription, Observable } from 'rxjs';
 import { CategoryService } from './category.service';
+import { AuthService } from '../auth/auth.service';
 
 class ViewCategory implements Category {
     id: string;
@@ -16,6 +17,8 @@ class ViewCategory implements Category {
     styleUrls: ['./category.component.css']
 })
 export class CategoryComponent implements OnInit, OnDestroy, AfterViewInit {
+    userIsAuthenticated = false;
+    userId: string;
     public isEdit: boolean = false;
     public isShowAddList: boolean = false;
     categoriesData: Category[] = [];
@@ -23,13 +26,14 @@ export class CategoryComponent implements OnInit, OnDestroy, AfterViewInit {
     inputCategForm: FormGroup;
     private categories: ViewCategory[] = [];
     private categoriesSub: Subscription;
-
+    private authStatusSub: Subscription;
 
 
     constructor(private fb: FormBuilder,
                 private categService: CategoryService,
                 private ref: ChangeDetectorRef,
-                private elemetRef: ElementRef) {}
+                private elemetRef: ElementRef,
+                private authService: AuthService) {}
 
     ngOnInit() {
         this.inputCategForm = this.fb.group({
@@ -43,6 +47,11 @@ export class CategoryComponent implements OnInit, OnDestroy, AfterViewInit {
                 arrayCategories.push({ id: items[i].id, title: items[i].title, editing: false });
             }
             this.categories = arrayCategories;
+        });
+        this.userIsAuthenticated = this.authService.getIsAuth();
+        this.authStatusSub = this.authService.getAuthStatusListener().subscribe(isAuthenticated => {
+            this.userIsAuthenticated = isAuthenticated;
+            this.userId = this.authService.getUserId();
         });
     }
 
@@ -87,5 +96,6 @@ export class CategoryComponent implements OnInit, OnDestroy, AfterViewInit {
 
     ngOnDestroy() {
         this.categoriesSub.unsubscribe();
+        this.authStatusSub.unsubscribe();
     }
 }

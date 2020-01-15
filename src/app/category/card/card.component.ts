@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Card } from './card.model';
 import { Category } from '../category.model';
@@ -21,7 +21,7 @@ class ViewCard implements Card {
     styleUrls: ['./card.component.css']
 })
 
-export class CardComponent implements OnInit {
+export class CardComponent implements OnInit, OnDestroy {
     public isShowAddCard: boolean = false;
     public isEditCard: boolean = false;
     inputCardForm: FormGroup;
@@ -127,5 +127,9 @@ export class CardComponent implements OnInit {
         } else if (reason === ModalDismissReasons.ESC) {
             return false;
         }
+    }
+
+    ngOnDestroy() {
+        this.cardsSub.unsubscribe();
     }
 }

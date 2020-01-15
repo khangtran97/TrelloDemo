@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { LoginService } from './login.service';
+// import { LoginService } from './login.service';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 
@@ -14,7 +14,6 @@ export class LoginComponent implements OnInit {
     returnUrl: string;
 
     constructor(private fb: FormBuilder,
-                private loginService: LoginService,
                 private router: Router,
                 private authService: AuthService) {}
 
@@ -24,7 +23,7 @@ export class LoginComponent implements OnInit {
         password: ['', [Validators.required, Validators.minLength(10)]]
         });
         // this.returnUrl = '/dashboard';
-        this.authService.logout();
+        // this.authService.logout();
     }
 
     get f() { return this.loginForm.controls; }
@@ -32,6 +31,6 @@ export class LoginComponent implements OnInit {
     onSubmit() {
         const username = this.f.username.value;
         const password = this.f.password.value;
-        this.loginService.validateUser(username, password);
+        this.authService.login(username, password);
     }
 }

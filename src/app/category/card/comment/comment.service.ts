@@ -1,12 +1,45 @@
 import { Injectable } from '@angular/core';
 import { Card } from '../card.model';
 import { HttpClient } from '@angular/common/http';
+import { Subject } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({providedIn: 'root'})
 
 export class CommentService {
-    private comment: Comment[] = [];
+    private comments: Comment[] = [];
+    public commentsUpdated = new Subject<Comment[]>();
     constructor(private http: HttpClient) {}
+
+    getComments() {
+        this.http.get<{message: string; comments: any}>(
+            'http://localhost:3000/comment'
+        )
+        .pipe(
+            map(commentData => {
+                return {
+                    comments: commentData.comments.map(comment => {
+                        return {
+                            id: comment._id,
+                            content: comment.content,
+                            card: comment.card,
+                            user: comment.user
+                        };
+                    })
+                };
+            })
+        )
+        .subscribe(transformCommentData => {
+            this.comments = transformCommentData.comments;
+            this.commentsUpdated.next(
+                [...this.comments]
+            );
+        });
+    }
+
+    getCommentUpdateListener() {
+        return this.commentsUpdated.asObservable();
+    }
 
     addComment(value, cardSelected: Card, userId, callback) {
         const comment = { id: null, content: value, card: cardSelected.id, user: userId };

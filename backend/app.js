@@ -2,7 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const session = require('express-session');
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const checkAuth = require('./middleware/check-auth');
 const MongoStore = require('connect-mongo')(session);
 
 const Category = require('./models/category');
@@ -32,7 +34,7 @@ app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader(
         "Access-Control-Allow-Headers", 
-        "Origin, X-Requested-With, Content-Type, Accept"
+        "Origin, X-Requested-With, Content-Type, Accept, Authorization"
     );
     res.setHeader(
         "Access-Control-Allow-Methods",
@@ -41,19 +43,29 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(session({
-    secret: 'work hard',
-    resave: true,
-    saveUninitialized: false,
-    store: new MongoStore({
-        mongooseConnection: db
-    })
-}))
+// app.use(session({
+//     secret: 'work hard',
+//     resave: true,
+//     saveUninitialized: false,
+//     store: new MongoStore({
+//         mongooseConnection: db
+//     })
+// }))
 
-UserSchema.methods.comparePassword = function(plaintext, callback) {
-    return callback(null, bcrypt.compareSync(plaintext, this.password));
-};
+//Middleware check Auth
+// function requireLogin(req, res, next) {
+//     if(req.session && req.session.userId) {
+//         return next();
+//     } else {
+//         var err = new Error('You must be logged in to view this page.');
+//         err.status = 401;
+//         return next(err);
+//     }
+// }
 
+
+
+// Authentication
 app.post("/register", async (req, res) => {
     UserModel.findOne({userName: req.body.userName}, (err, user) => {
         if(user == null) {
@@ -75,29 +87,63 @@ app.post("/register", async (req, res) => {
 })
 
 app.route('/login').post((req, res) => {
-    UserModel.findOne({userName: req.body.userName}).exec((err, user) => {
-        if(!user) {
-            return res.status(400).send({ 
-                message: "The username does not exist" 
+//     UserModel.findOne({userName: req.body.userName}).exec((err, user) => {
+//         if(!user) {
+//             return res.status(400).send({ 
+//                 message: "The username does not exist" 
+//             });
+//         }
+//         bcrypt.compare(req.body.password, user.password, (err, result) => {
+//             if(result === true) {
+//                 req.session.user = user._id;
+//                 return res.status(201).json({
+//                     user: user,
+//                     message: 'Login succesfull!'
+//                 })                
+//             }
+//             if(result === false) {
+//                 return res.status(400).send({
+//                     message: 'Password are incorrect'
+//                 })
+//             }
+//         });
+//     });
+    let fetchedUser;
+    UserModel.findOne({ userName: req.body.userName }).then(user => {
+        if (!user) {
+            return res.status(401).json({
+                message: 'Auth failed'
             });
         }
-        bcrypt.compare(req.body.password, user.password, (err, result) => {
-            if(result === true) {
-                req.session.user = user;
-                return res.status(201).json({
-                    user: user,
-                    message: 'Login succesfull!'
-                })                
-            }
-            if(result === false) {
-                return res.status(400).send({
-                    message: 'Password are incorrect'
-                })
-            }
+        fetchedUser = user;
+        return bcrypt.compare(req.body.password, user.password);
+    })
+    .then(result => {
+        if(!result) {
+            return res.status(401).json({
+                message: 'Auth failed'
+            });
+        }
+        const token = jwt.sign(
+            {email: fetchedUser.userName, userId: fetchedUser._id},
+            "secret_this_should_be_longer",
+            {expiresIn: "1h"}
+        );
+        res.status(200).json({
+            token: token,
+            expiresIn: 3600,
+            userId: fetchedUser._id
+        });
+    })
+    .catch(err => {
+        return res.status(401).json({
+            message: 'Auth failed'
         });
     });
 });
 
+
+// Category
 app.route('/category').get((req, res, next) => {
     Category.find().then(data => {
       res.status(200).json({
@@ -167,6 +213,9 @@ app.route('/category/:id').put((req, res) => {
     })
 })
 
+
+
+//Card
 app.route('/card').post((req, res) => {
     const card = new Card({
         title: req.body.title,
@@ -239,7 +288,17 @@ app.route('/card/:id').delete((req, res, next) => {
             message: "Could not delete category with id " + req.body.id
         });
     });
-    Comment.dele
+})
+
+
+// Comment
+app.route('/comment').get((req, res) => {
+    Comment.find().then(data => {
+        res.status(200).json({
+            message: "Card retrieved succesfully!",
+            comments: data
+        });
+    });
 })
 
 app.route('/comment').post((req, res, next) => {
@@ -266,24 +325,31 @@ app.route('/comment').post((req, res, next) => {
     })
 })
 
-app.route('/comment/:id').delete((req, res, next) => {
-    Comment.deleteOne({ _id: req.params.id}).then(result => {
-        if(!result) {
-            return res.status(404).json({
-                message: "comment not found with id " + req.body.id
-            });
+app.route('/comment/:id').delete(checkAuth, (req, res, next) => {
+    // Comment.deleteOne({ _id: req.params.id}).then(result => {
+    //     if(!result) {
+    //         return res.status(404).json({
+    //             message: "comment not found with id " + req.body.id
+    //         });
+    //     }
+    //     res.status(200).json({message: "comment deleted successfully!"});
+    // }).catch(err => {
+    //     if(err.kind === 'ObjectId' || err.name === 'NotFound') {
+    //         return res.status(404).json({
+    //             message: "comment not found with id " + req.body.id
+    //         });                
+    //     }
+    //     return res.status(500).json({
+    //         message: "Could not delete comment with id " + req.body.id
+    //     });
+    // });
+    Comment.deleteOne({ _id: req.params.id, user: req.userData.userId }).then(result => {
+        if(result.n > 0) {
+            res.status(200).json({ message: "Deletion successful!"});
+        } else {
+            res.status(401).json({ message: "Not authorized!"});
         }
-        res.status(200).json({message: "comment deleted successfully!"});
-    }).catch(err => {
-        if(err.kind === 'ObjectId' || err.name === 'NotFound') {
-            return res.status(404).json({
-                message: "comment not found with id " + req.body.id
-            });                
-        }
-        return res.status(500).json({
-            message: "Could not delete comment with id " + req.body.id
-        });
-    });
+    })
 })
 
 module.exports = app;

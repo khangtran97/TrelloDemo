@@ -19,7 +19,7 @@
     </div>
 </div>
 <div class="card-comment-list">
-    <div class="comment-type">
+    <div class="comment-type" *ngFor="let comment of comments">
         <div class="comment-creator">
             <span class="member-name">DT</span>
         </div>
@@ -30,13 +30,13 @@
             <div class="comment-desc-container">
                 <div class="comment-desc-wrap">
                     <div class="comment-desc-content">
-                        <p>shgklsdgklsdjklgjskldfjgksdkfjglsjdf</p>
+                        <p>{{ comment.content }}</p>
                     </div>                    
                 </div>
                 <div class="comment-desc-edit">
                     <span class="comment-desc-editdel">
                         <a class="edit-action" >Edit</a> - 
-                        <a class="delete-action">Delete</a>
+                        <a class="delete-action" (click)="onDelete(comment.id)">Delete</a>
                     </span>
                 </div>
             </div>
