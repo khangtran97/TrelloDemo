@@ -22,6 +22,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CommentComponent } from './category/card/comment/comment.component';
 import { AuthInterceptor } from './auth/auth-interceptor';
 import { AppRoutingModule } from './app-routing.module';
+import { AuthService } from './auth/auth.service';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,7 @@ import { AppRoutingModule } from './app-routing.module';
     NgbModule,
     AppRoutingModule
   ],
-  providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}],
+  providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}, AuthService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

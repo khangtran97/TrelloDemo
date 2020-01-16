@@ -3,6 +3,7 @@ import { Card } from '../card.model';
 import { HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { User } from 'src/app/register/user.model';
 
 @Injectable({providedIn: 'root'})
 
@@ -48,6 +49,21 @@ export class CommentService {
         .subscribe(responseData => {
             callback();
         });
+    }
+
+    updateComment(Id: string, Content, card: Card, userId, callback) {
+        let commentData: any;
+        commentData = {
+            id: Id,
+            content: Content,
+            card: card.id,
+            user: userId
+        };
+        this.http
+            .put('http://localhost:3000/comment/' + Id, commentData)
+            .subscribe(reponse => {
+                callback();
+            });
     }
 
     deleteComment(commentId: string) {

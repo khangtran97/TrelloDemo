@@ -48,11 +48,6 @@ export class CategoryComponent implements OnInit, OnDestroy, AfterViewInit {
             }
             this.categories = arrayCategories;
         });
-        this.userIsAuthenticated = this.authService.getIsAuth();
-        this.authStatusSub = this.authService.getAuthStatusListener().subscribe(isAuthenticated => {
-            this.userIsAuthenticated = isAuthenticated;
-            this.userId = this.authService.getUserId();
-        });
     }
 
     ngAfterViewInit() {
@@ -96,6 +91,5 @@ export class CategoryComponent implements OnInit, OnDestroy, AfterViewInit {
 
     ngOnDestroy() {
         this.categoriesSub.unsubscribe();
-        this.authStatusSub.unsubscribe();
     }
 }

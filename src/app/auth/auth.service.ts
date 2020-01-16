@@ -8,9 +8,11 @@ import { Router } from '@angular/router';
 export class AuthService {
     private isAuthenticated = false;
     private token: string;
-    private authStautusListener = new Subject<boolean>();
+    authStautusListener = new Subject<boolean>();
+    userNameListener = new Subject<string>();
     private tokenTimer: any;
     private userId: string;
+    private userName: string;
 
     constructor(private http: HttpClient, private router: Router) {}
 
@@ -34,13 +36,17 @@ export class AuthService {
         return this.userId;
     }
 
+    getUserName() {
+        return this.userName;
+    }
+
     getAuthStatusListener() {
         return this.authStautusListener.asObservable();
     }
 
     login(email: string, password: string) {
         const authData: User = {userName: email, password: password};
-        this.http.post<{token: string, expiresIn: number, userId: string}>('http://localhost:3000/login', authData)
+        this.http.post<{token: string, expiresIn: number, userId: string, userName: string}>('http://localhost:3000/login', authData)
             .subscribe(response => {
                 const token = response.token;
                 this.token = token;
@@ -49,10 +55,11 @@ export class AuthService {
                     this.setAuthTimer(expiresInduration);
                     this.isAuthenticated = true;
                     this.userId = response.userId;
+                    this.userName = response.userName;
                     this.authStautusListener.next(true);
                     const now = new Date();
                     const expirationDate = new Date(now.getTime() + expiresInduration * 1000);
-                    this.saveAuthData(token, expirationDate, this.userId);
+                    this.saveAuthData(token, expirationDate, this.userId, this.userName);
                     this.router.navigate(['/category']);
                 }
             });
@@ -81,7 +88,11 @@ export class AuthService {
         this.userId = null;
         clearTimeout(this.tokenTimer);
         this.clearAuthData();
-        this.router.navigate(['/']);
+        this.router.navigate(['/login']);
+    }
+
+    getUsernameUpdateListener() {
+        return this.userNameListener.asObservable();
     }
 
     private setAuthTimer(duration: number) {
@@ -90,10 +101,11 @@ export class AuthService {
         }, duration * 1000);
     }
 
-    private saveAuthData(token: string, expirationDate: Date, userId: string) {
+    private saveAuthData(token: string, expirationDate: Date, userId: string, userName: string) {
         localStorage.setItem('token', token);
         localStorage.setItem('expiration', expirationDate.toISOString());
         localStorage.setItem('userId', userId);
+        localStorage.setItem('userName', userName);
     }
 
     private clearAuthData() {
@@ -116,18 +128,3 @@ export class AuthService {
         };
     }
 }
-
-
-// import { Injectable } from '@angular/core';
-// import { JwtHelperService } from '@auth0/angular-jwt';
-
-// @Injectable({ providedIn: 'root' })
-
-// export class AuthService {
-//   constructor() {}
-
-//   logout(): void {
-//       localStorage.setItem('isLoggedIn', 'false');
-//       localStorage.removeItem('token');
-//   }
-// }

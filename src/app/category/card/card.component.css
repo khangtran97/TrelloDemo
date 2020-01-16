@@ -224,6 +224,11 @@ a {
     margin: 4px 8px 4px 2px;
 }
 
+.card-modal-category a:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
 .current-list {
     display: inline-block;
 }

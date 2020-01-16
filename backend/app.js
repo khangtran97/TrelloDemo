@@ -43,27 +43,6 @@ app.use((req, res, next) => {
     next();
 });
 
-// app.use(session({
-//     secret: 'work hard',
-//     resave: true,
-//     saveUninitialized: false,
-//     store: new MongoStore({
-//         mongooseConnection: db
-//     })
-// }))
-
-//Middleware check Auth
-// function requireLogin(req, res, next) {
-//     if(req.session && req.session.userId) {
-//         return next();
-//     } else {
-//         var err = new Error('You must be logged in to view this page.');
-//         err.status = 401;
-//         return next(err);
-//     }
-// }
-
-
 
 // Authentication
 app.post("/register", async (req, res) => {
@@ -86,28 +65,22 @@ app.post("/register", async (req, res) => {
     })
 })
 
+app.route('/login/:id').get((req, res) => {
+    UserModel.findOne({_id: req.body.userId}).then(user => {
+        if(!user) {
+            return res.status(401).json({
+                message: 'Account not exist!'
+            });
+        } else {
+            return res.status(200).json({
+                message: 'Account founded',
+                user: user
+            })
+        }
+    })
+})
+
 app.route('/login').post((req, res) => {
-//     UserModel.findOne({userName: req.body.userName}).exec((err, user) => {
-//         if(!user) {
-//             return res.status(400).send({ 
-//                 message: "The username does not exist" 
-//             });
-//         }
-//         bcrypt.compare(req.body.password, user.password, (err, result) => {
-//             if(result === true) {
-//                 req.session.user = user._id;
-//                 return res.status(201).json({
-//                     user: user,
-//                     message: 'Login succesfull!'
-//                 })                
-//             }
-//             if(result === false) {
-//                 return res.status(400).send({
-//                     message: 'Password are incorrect'
-//                 })
-//             }
-//         });
-//     });
     let fetchedUser;
     UserModel.findOne({ userName: req.body.userName }).then(user => {
         if (!user) {
@@ -132,7 +105,8 @@ app.route('/login').post((req, res) => {
         res.status(200).json({
             token: token,
             expiresIn: 3600,
-            userId: fetchedUser._id
+            userId: fetchedUser._id,
+            userName: fetchedUser.userName
         });
     })
     .catch(err => {
@@ -326,28 +300,27 @@ app.route('/comment').post((req, res, next) => {
 })
 
 app.route('/comment/:id').delete(checkAuth, (req, res, next) => {
-    // Comment.deleteOne({ _id: req.params.id}).then(result => {
-    //     if(!result) {
-    //         return res.status(404).json({
-    //             message: "comment not found with id " + req.body.id
-    //         });
-    //     }
-    //     res.status(200).json({message: "comment deleted successfully!"});
-    // }).catch(err => {
-    //     if(err.kind === 'ObjectId' || err.name === 'NotFound') {
-    //         return res.status(404).json({
-    //             message: "comment not found with id " + req.body.id
-    //         });                
-    //     }
-    //     return res.status(500).json({
-    //         message: "Could not delete comment with id " + req.body.id
-    //     });
-    // });
     Comment.deleteOne({ _id: req.params.id, user: req.userData.userId }).then(result => {
         if(result.n > 0) {
             res.status(200).json({ message: "Deletion successful!"});
         } else {
             res.status(401).json({ message: "Not authorized!"});
+        }
+    })
+})
+
+app.route('/comment/:id').put(checkAuth, (req, res) => {
+    const comment = new Comment({
+        _id: req.body.id,
+        content: req.body.content,
+        card: req.body.card,
+        user: req.userData.userId
+    });
+    Comment.updateOne({ _id: req.params.id, user: req.userData.userId }, comment).then(result => {
+        if(result.nModified > 0) {
+            res.status(200).json({ message: "Update successfull!" });
+        } else {
+            res.status(401).json({ message: "Not Authorized!"});
         }
     })
 })

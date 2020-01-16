@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { CommentService } from './comment.service';
@@ -6,6 +6,7 @@ import { Card } from '../card.model';
 import { Subscription } from 'rxjs';
 import { Comment } from './comment.model';
 import { AuthService } from 'src/app/auth/auth.service';
+import { User } from 'src/app/register/user.model';
 
 class ViewComment implements Comment {
     id: string;
@@ -20,14 +21,17 @@ class ViewComment implements Comment {
     templateUrl: './comment.component.html',
     styleUrls: ['./comment.component.css']
 })
-export class CommentComponent implements OnInit {
+export class CommentComponent implements OnInit, OnDestroy {
     userIsAuthenticated = false;
     isShowAddComment: boolean = false;
     userId: string;
+    userName: string;
     inputMemberCardForm: FormGroup;
+    inputEditCommentForm: FormGroup;
     public comments: ViewComment[] = [];
     private commentsSub: Subscription;
     private authStatusSub: Subscription;
+    private usernameSub: Subscription;
 
     @Input('cardSelected') card: Card;
 
@@ -39,6 +43,9 @@ export class CommentComponent implements OnInit {
         this.inputMemberCardForm = this.fb.group({
             textComment: ['', [Validators.required, Validators.minLength(3)]]
         });
+        this.inputEditCommentForm = this.fb.group({
+            textCommentEdit: ['', [Validators.required, Validators.minLength(3)]]
+        })
         this.commentService.getComments();
         this.commentsSub = this.commentService.getCommentUpdateListener().subscribe((data: any) => {
             let arrayComment = [];
@@ -47,16 +54,15 @@ export class CommentComponent implements OnInit {
                     id: data[i].id,
                     content: data[i].content,
                     card: data[i].card,
-                    user: data[i].user
+                    user: data[i].user,
+                    editing: false
                 });
             }
             this.comments = arrayComment.filter(comment => comment.card === this.card.id);
         });
         this.userIsAuthenticated = this.authService.getIsAuth();
-        this.authStatusSub = this.authService.getAuthStatusListener().subscribe(isAuthenticated => {
-            this.userIsAuthenticated = isAuthenticated;
-            this.userId = this.authService.getUserId();
-        });
+        this.userId = this.authService.getUserId();
+        this.userName = localStorage.getItem('userName');
     }
 
     ShowAddComment() {
@@ -79,5 +85,30 @@ export class CommentComponent implements OnInit {
         this.commentService.deleteComment(commentId).subscribe(() => {
             this.commentService.getComments();
         });
+    }
+
+    onCancelEditComment(index) {
+        this.comments[index].editing = false;
+        this.inputEditCommentForm.reset();
+    }
+
+    onEditingComment(index) {
+        this.comments[index].editing = true;
+    }
+
+    onEditComment(index, card: Card) {
+        this.comments[index].editing = false;
+        this.commentService.updateComment(
+            this.comments[index].id,
+            this.inputEditCommentForm.get('textCommentEdit').value,
+            card,
+            this.userId,
+            () => {
+                this.commentService.getComments();
+            });
+    }
+
+    ngOnDestroy() {
+        this.commentsSub.unsubscribe();
     }
 }

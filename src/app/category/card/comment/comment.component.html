@@ -10,7 +10,7 @@
                         autosize
                         class="text-comment"
                         placeholder="Write a comment"
-                        ngDefaultControl (focusout)="ShowAddComment()" autofocus></textarea>
+                        ngDefaultControl autofocus></textarea>
               <span class="control-button">
                   <button type="submit" [disabled]="inputMemberCardForm.invalid" class="btn btn-success">Save</button>
               </span>
@@ -19,23 +19,38 @@
     </div>
 </div>
 <div class="card-comment-list">
-    <div class="comment-type" *ngFor="let comment of comments">
+    <div class="comment-type" *ngFor="let comment of comments; let i = index">
         <div class="comment-creator">
             <span class="member-name">DT</span>
         </div>
         <div class="comment-desc">
             <span class="comment-desc-member">
-                Duc Khang Tran
+                {{userName}}
             </span>
             <div class="comment-desc-container">
                 <div class="comment-desc-wrap">
-                    <div class="comment-desc-content">
+                    <div class="comment-desc-content" *ngIf="!comments[i].editing">
                         <p>{{ comment.content }}</p>
+                    </div>
+                    <div class="comment-desc-content-editing" *ngIf="comments[i].editing">
+                        <ng-container>
+                            <form [formGroup]="inputEditCommentForm" (ngSubmit)="onEditComment(i,card)" class="input-comment-edit-form">
+                                <textarea formControlName="textCommentEdit"
+                                          autosize
+                                          class="editCommentTitle"
+                                          [ngModel]="comment.content"
+                                          ngDefaultControl autofocus></textarea>
+                                <span class="control-button">
+                                    <button type="submit" [disabled]="inputEditCommentForm.invalid" class="btn btn-success">Save</button> 
+                                    <div class="icon-close-add-form" (click)="onCancelEditComment(i)"><i class="material-icons">close</i></div>                                   
+                                </span>
+                            </form>
+                        </ng-container>
                     </div>                    
                 </div>
-                <div class="comment-desc-edit">
+                <div class="comment-desc-edit" *ngIf="userIsAuthenticated && userId === comment.user">
                     <span class="comment-desc-editdel">
-                        <a class="edit-action" >Edit</a> - 
+                        <a class="edit-action" (click)="onEditingComment(i)">Edit</a> - 
                         <a class="delete-action" (click)="onDelete(comment.id)">Delete</a>
                     </span>
                 </div>

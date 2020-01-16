@@ -5,6 +5,7 @@ import { Category } from '../category.model';
 import { CardService } from './card.service';
 import { Subscription } from 'rxjs';
 import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
+import { AuthService } from 'src/app/auth/auth.service';
 
 class ViewCard implements Card {
     id: string;
@@ -37,7 +38,8 @@ export class CardComponent implements OnInit, OnDestroy {
 
     constructor(private cardService: CardService,
                 private fb: FormBuilder,
-                private modalService: NgbModal) {}
+                private modalService: NgbModal,
+                private authService: AuthService) {}
 
     ngOnInit() {
         this.inputCardForm = this.fb.group({
@@ -112,6 +114,7 @@ export class CardComponent implements OnInit, OnDestroy {
     }
 
     openLg(content) {
+        // this.authService.getAuthStatusListener();
         this.modalService.open(content, { size: 'lg' }).result.then(
             (result) => {
                 this.isShowAddComment = this.closeModal(result);
