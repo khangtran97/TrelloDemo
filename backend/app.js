@@ -65,20 +65,20 @@ app.post("/register", async (req, res) => {
     })
 })
 
-app.route('/login/:id').get((req, res) => {
-    UserModel.findOne({_id: req.body.userId}).then(user => {
-        if(!user) {
-            return res.status(401).json({
-                message: 'Account not exist!'
-            });
-        } else {
-            return res.status(200).json({
-                message: 'Account founded',
-                user: user
-            })
-        }
-    })
-})
+// app.route('/login/:id').get((req, res) => {
+//     UserModel.findOne({_id: req.body.user}).then(user => {
+//         if(!user) {
+//             return res.status(401).json({
+//                 message: 'Account not exist!'
+//             });
+//         } else {
+//             return res.status(200).json({
+//                 message: 'Account founded',
+//                 user: user
+//             })
+//         }
+//     })
+// })
 
 app.route('/login').post((req, res) => {
     let fetchedUser;
@@ -278,6 +278,7 @@ app.route('/comment').get((req, res) => {
 app.route('/comment').post((req, res, next) => {
     const comment = new Comment({
         content: req.body.content,
+        creator: req.body.creator,
         card: req.body.card,
         user: req.body.user
     });
@@ -287,6 +288,7 @@ app.route('/comment').post((req, res, next) => {
             card: {
                 id: createdComment._id,
                 content: createdComment.content,
+                creator: createdComment.creator,
                 card: createdComment.card,
                 user: createdComment.user
             }
@@ -313,6 +315,7 @@ app.route('/comment/:id').put(checkAuth, (req, res) => {
     const comment = new Comment({
         _id: req.body.id,
         content: req.body.content,
+        creator: req.body.creator,
         card: req.body.card,
         user: req.userData.userId
     });

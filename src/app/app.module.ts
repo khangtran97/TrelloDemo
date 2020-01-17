@@ -1,12 +1,14 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material';
 import { AutosizeModule } from 'ngx-autosize';
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 import { AppComponent } from './app.component';
 import { RegisterComponent } from './register/register.component';
@@ -23,6 +25,9 @@ import { CommentComponent } from './category/card/comment/comment.component';
 import { AuthInterceptor } from './auth/auth-interceptor';
 import { AppRoutingModule } from './app-routing.module';
 import { AuthService } from './auth/auth.service';
+import { LoaderComponent } from './loader/loader.component';
+import { LoaderService } from './loader/loader.service';
+import { LoaderInterceptor } from './loader/loader.interceptor';
 
 @NgModule({
   declarations: [
@@ -33,7 +38,8 @@ import { AuthService } from './auth/auth.service';
     CategoryComponent,
     CardComponent,
     HomeComponent,
-    CommentComponent
+    CommentComponent,
+    LoaderComponent
   ],
   imports: [
     BrowserModule,
@@ -45,9 +51,14 @@ import { AuthService } from './auth/auth.service';
     MatIconModule,
     AutosizeModule,
     NgbModule,
-    AppRoutingModule
+    AppRoutingModule,
+    NgxSpinnerModule,
+    MatProgressSpinnerModule,
   ],
-  providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}, AuthService],
+  providers: [LoaderService,
+              {provide: HTTP_INTERCEPTORS, useClass: LoaderInterceptor, multi: true},
+              {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
+              AuthService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

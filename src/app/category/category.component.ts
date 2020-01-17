@@ -3,7 +3,7 @@ import { Category } from './category.model';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Subject, Subscription, Observable } from 'rxjs';
 import { CategoryService } from './category.service';
-import { AuthService } from '../auth/auth.service';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 class ViewCategory implements Category {
     id: string;
@@ -19,6 +19,7 @@ class ViewCategory implements Category {
 export class CategoryComponent implements OnInit, OnDestroy, AfterViewInit {
     userIsAuthenticated = false;
     userId: string;
+    isLoading = false;
     public isEdit: boolean = false;
     public isShowAddList: boolean = false;
     categoriesData: Category[] = [];
@@ -32,8 +33,7 @@ export class CategoryComponent implements OnInit, OnDestroy, AfterViewInit {
     constructor(private fb: FormBuilder,
                 private categService: CategoryService,
                 private ref: ChangeDetectorRef,
-                private elemetRef: ElementRef,
-                private authService: AuthService) {}
+                private elemetRef: ElementRef) {}
 
     ngOnInit() {
         this.inputCategForm = this.fb.group({

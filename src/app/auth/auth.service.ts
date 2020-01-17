@@ -91,6 +91,13 @@ export class AuthService {
         this.router.navigate(['/login']);
     }
 
+    getUserNameById(id) {
+        this.http.get<{ message: string, user: User}>('http://localhost:3000/login/' + id).subscribe(userData => {
+            this.userName = userData.user.userName;
+            this.userNameListener.next(this.userName);
+        });
+    }
+
     getUsernameUpdateListener() {
         return this.userNameListener.asObservable();
     }

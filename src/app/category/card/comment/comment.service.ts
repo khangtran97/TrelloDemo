@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { User } from 'src/app/register/user.model';
+import { createAotUrlResolver } from '@angular/compiler';
 
 @Injectable({providedIn: 'root'})
 
@@ -42,8 +43,8 @@ export class CommentService {
         return this.commentsUpdated.asObservable();
     }
 
-    addComment(value, cardSelected: Card, userId, callback) {
-        const comment = { id: null, content: value, card: cardSelected.id, user: userId };
+    addComment(value, Creator, cardSelected: Card, userId, callback) {
+        const comment = { id: null, content: value, creator: Creator, card: cardSelected.id, user: userId };
         this.http
         .post<{message: string, comment: Comment}>('http://localhost:3000/comment', comment)
         .subscribe(responseData => {
@@ -51,11 +52,12 @@ export class CommentService {
         });
     }
 
-    updateComment(Id: string, Content, card: Card, userId, callback) {
+    updateComment(Id: string, Content, Creator, card: Card, userId, callback) {
         let commentData: any;
         commentData = {
             id: Id,
             content: Content,
+            creator: createAotUrlResolver,
             card: card.id,
             user: userId
         };

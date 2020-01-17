@@ -11,6 +11,7 @@ import { User } from 'src/app/register/user.model';
 class ViewComment implements Comment {
     id: string;
     content: string;
+    creator: string;
     card: string;
     user: string;
     editing: boolean = false;
@@ -53,6 +54,7 @@ export class CommentComponent implements OnInit, OnDestroy {
                 arrayComment.push({
                     id: data[i].id,
                     content: data[i].content,
+                    creator: data[i].creator,
                     card: data[i].card,
                     user: data[i].user,
                     editing: false
@@ -62,7 +64,12 @@ export class CommentComponent implements OnInit, OnDestroy {
         });
         this.userIsAuthenticated = this.authService.getIsAuth();
         this.userId = this.authService.getUserId();
-        this.userName = localStorage.getItem('userName');
+        // this.userName = localStorage.getItem('userName');
+
+        // this.authService.getUserNameById(this.userId);
+        // this.usernameSub = this.authService.getUsernameUpdateListener().subscribe(users => {
+        //     const user = users;
+        // });
     }
 
     ShowAddComment() {
@@ -73,6 +80,7 @@ export class CommentComponent implements OnInit, OnDestroy {
         this
         .commentService
         .addComment(this.inputMemberCardForm.value.textComment,
+                    localStorage.getItem('userName'),
                     card,
                     localStorage.getItem('userId'),
                     () => {
@@ -101,6 +109,7 @@ export class CommentComponent implements OnInit, OnDestroy {
         this.commentService.updateComment(
             this.comments[index].id,
             this.inputEditCommentForm.get('textCommentEdit').value,
+            localStorage.getItem('userName'),
             card,
             this.userId,
             () => {

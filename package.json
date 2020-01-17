@@ -36,6 +36,7 @@
     "mongoose": "^5.8.5",
     "morgan": "^1.9.1",
     "ngx-autosize": "^1.7.2",
+    "ngx-spinner": "^8.1.0",
     "rxjs": "~6.4.0",
     "session": "^0.1.0",
     "tslib": "^1.10.0",
