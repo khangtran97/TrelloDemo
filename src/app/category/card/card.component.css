@@ -176,6 +176,12 @@ a {
     resize: none;
 }
 
+.control-button .material-icons {
+    padding-top: 3px;
+    margin: 0 5px;
+    cursor: pointer;
+}
+
 .quick-card-editor {
     background: rgba(0,0,0,.6);
     bottom: 0;

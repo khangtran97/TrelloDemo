@@ -4,6 +4,7 @@ import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms'
 import { Subject, Subscription, Observable } from 'rxjs';
 import { CategoryService } from './category.service';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 
 class ViewCategory implements Category {
     id: string;
@@ -25,7 +26,7 @@ export class CategoryComponent implements OnInit, OnDestroy, AfterViewInit {
     categoriesData: Category[] = [];
     private categUpdated = new Subject<Category[]>();
     inputCategForm: FormGroup;
-    private categories: ViewCategory[] = [];
+    categories: ViewCategory[] = [];
     private categoriesSub: Subscription;
     private authStatusSub: Subscription;
 
@@ -91,5 +92,16 @@ export class CategoryComponent implements OnInit, OnDestroy, AfterViewInit {
 
     ngOnDestroy() {
         this.categoriesSub.unsubscribe();
+    }
+
+    drop(event: CdkDragDrop<string[]>) {
+        if (event.previousContainer === event.container) {
+          moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+        } else {
+          transferArrayItem(event.previousContainer.data,
+                            event.container.data,
+                            event.previousIndex,
+                            event.currentIndex);
+        }
     }
 }

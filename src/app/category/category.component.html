@@ -7,10 +7,10 @@
         </a>
     </div>    
     <div class="body-content">
-        <div id="content" >
-            <div class="board-wrapper">
-                <div class="board-main-content">
-                    <div class="list-wrapper" *ngFor="let categ of categories; index as i">
+        <div id="content">
+            <div class="board-wrapper" cdkDropListGroup>
+                <div class="board-main-content" cdkDropList [cdkDropListData]="categories" cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)">
+                    <div class="list-wrapper" *ngFor="let categ of categories; index as i" cdkDrag>
                         <div class="list-header">
                             <div class="column">
 
@@ -23,26 +23,26 @@
                                 <app-card [category]="categ"></app-card>                          
                             </div>                                               
                         </div>                    
-                    </div>
-                    <div class="add-list-wrapper">
-                        <ng-container *ngIf="!isShowAddList">
-                            <button class="btn open-add-list" (click)="onAddCategory()" *ngIf="categories.length < 10">
-                                <span class="placeholder">
-                                    <mat-icon class="add-icon">add</mat-icon>
-                                    <span class="text-add-list">Add another list</span>
-                                </span>
-                            </button>
-                        </ng-container>                    
-                        <ng-container *ngIf="isShowAddList">
-                            <form [formGroup]="inputCategForm" (ngSubmit)="onCreate()" class="input-category-form">
-                                <input formControlName="title" placeholder="Enter list title" ngDefaultControl class="form-field">
-                                <span class="control-button">
-                                    <button type="submit" [disabled]="inputCategForm.invalid" class="btn btn-success">Add List</button>
-                                    <div (click)="onCancelCategory()"><i class="material-icons">close</i></div>
-                                </span>
-                            </form>
-                        </ng-container>
-                    </div>
+                    </div>                    
+                </div>
+                <div class="add-list-wrapper">
+                    <ng-container *ngIf="!isShowAddList">
+                        <button class="btn open-add-list" (click)="onAddCategory()" *ngIf="categories.length < 10">
+                            <span class="placeholder">
+                                <mat-icon class="add-icon">add</mat-icon>
+                                <span class="text-add-list">Add another list</span>
+                            </span>
+                        </button>
+                    </ng-container>                    
+                    <ng-container *ngIf="isShowAddList">
+                        <form [formGroup]="inputCategForm" (ngSubmit)="onCreate()" class="input-category-form">
+                            <input formControlName="title" placeholder="Enter list title" ngDefaultControl class="form-field">
+                            <span class="control-button">
+                                <button type="submit" [disabled]="inputCategForm.invalid" class="btn btn-success">Add List</button>
+                                <div (click)="onCancelCategory()"><i class="material-icons">close</i></div>
+                            </span>
+                        </form>
+                    </ng-container>
                 </div>
             </div>
         </div>  

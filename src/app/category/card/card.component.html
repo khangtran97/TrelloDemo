@@ -1,5 +1,5 @@
-<div class="card-list">
-    <div class="card-list-name" *ngFor="let card of cards;let i = index">
+<div class="card-list" cdkDropList  (cdkDropListDropped)="drop($event)">
+    <div class="card-list-name" *ngFor="let card of cards;let i = index" cdkDrag>
         <a class="card-title">
             <div class="card-title-info">
                 <span class="icon-edit-card" *ngIf="!cards[i].editing" (click)="onEditingCard(i)"><i class="material-icons">edit</i></span>

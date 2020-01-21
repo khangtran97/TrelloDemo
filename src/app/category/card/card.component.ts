@@ -6,6 +6,7 @@ import { CardService } from './card.service';
 import { Subscription } from 'rxjs';
 import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from 'src/app/auth/auth.service';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 class ViewCard implements Card {
     id: string;
@@ -134,5 +135,9 @@ export class CardComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.cardsSub.unsubscribe();
+    }
+
+    drop(event: CdkDragDrop<string[]>) {
+        moveItemInArray(this.cards, event.previousIndex, event.currentIndex);
     }
 }
