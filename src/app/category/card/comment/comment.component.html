@@ -21,11 +21,11 @@
 <div class="card-comment-list">
     <div class="comment-type" *ngFor="let comment of comments; let i = index">
         <div class="comment-creator">
-            <span class="member-name">DT</span>
+            <span class="member-name-modal">DT</span>
         </div>
         <div class="comment-desc">
             <span class="comment-desc-member">
-                {{comment.creator}}
+                {{comment.user}}
             </span>
             <div class="comment-desc-container">
                 <div class="comment-desc-wrap">
@@ -48,7 +48,8 @@
                         </ng-container>
                     </div>                    
                 </div>
-                <div class="comment-desc-edit" *ngIf="userIsAuthenticated && userId === comment.user">
+                <span class="icon-vote-card"><i class="material-icons">thumb_up</i></span>
+                <div class="comment-desc-edit" *ngIf="userIsAuthenticated && userId === comment.user">                    
                     <span class="comment-desc-editdel">
                         <a class="edit-action" (click)="onEditingComment(i)">Edit</a> - 
                         <a class="delete-action" (click)="onDelete(comment.id)">Delete</a>

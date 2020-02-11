@@ -20,7 +20,7 @@ class ViewComment implements Comment {
 @Component({
     selector: 'app-comment',
     templateUrl: './comment.component.html',
-    styleUrls: ['./comment.component.css']
+    styleUrls: ['./comment.component.scss']
 })
 export class CommentComponent implements OnInit, OnDestroy {
     userIsAuthenticated = false;
@@ -46,30 +46,28 @@ export class CommentComponent implements OnInit, OnDestroy {
         });
         this.inputEditCommentForm = this.fb.group({
             textCommentEdit: ['', [Validators.required, Validators.minLength(3)]]
-        })
-        this.commentService.getComments();
-        this.commentsSub = this.commentService.getCommentUpdateListener().subscribe((data: any) => {
-            let arrayComment = [];
-            for (let i = 0; i < data.length; i++) {
+        });
+        this.filterComment();
+        this.userIsAuthenticated = this.authService.getIsAuth();
+        this.userId = this.authService.getUserId();
+    }
+
+    filterComment() {
+        this.commentService.getComments().subscribe((data) => {
+            const arrayComment = [];
+            let comments = data.comments;
+            for (let i = 0; i < comments.length; i++) {
                 arrayComment.push({
-                    id: data[i].id,
-                    content: data[i].content,
-                    creator: data[i].creator,
-                    card: data[i].card,
-                    user: data[i].user,
+                    id: comments[i].id,
+                    content: comments[i].content,
+                    creator: comments[i].creator,
+                    card: comments[i].card,
+                    user: comments[i].user,
                     editing: false
                 });
             }
             this.comments = arrayComment.filter(comment => comment.card === this.card.id);
         });
-        this.userIsAuthenticated = this.authService.getIsAuth();
-        this.userId = this.authService.getUserId();
-        // this.userName = localStorage.getItem('userName');
-
-        // this.authService.getUserNameById(this.userId);
-        // this.usernameSub = this.authService.getUsernameUpdateListener().subscribe(users => {
-        //     const user = users;
-        // });
     }
 
     ShowAddComment() {
@@ -84,14 +82,14 @@ export class CommentComponent implements OnInit, OnDestroy {
                     card,
                     localStorage.getItem('userId'),
                     () => {
-                    this.commentService.getComments();
+                    this.filterComment();
                     this.inputMemberCardForm.reset();
         });
     }
 
     onDelete(commentId: string) {
         this.commentService.deleteComment(commentId).subscribe(() => {
-            this.commentService.getComments();
+            this.filterComment();
         });
     }
 
@@ -118,6 +116,5 @@ export class CommentComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.commentsSub.unsubscribe();
     }
 }

@@ -10,6 +10,7 @@ import { MatProgressSpinnerModule } from '@angular/material';
 import { AutosizeModule } from 'ngx-autosize';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import {MatMenuModule} from '@angular/material/menu';
 
 import { AppComponent } from './app.component';
 import { RegisterComponent } from './register/register.component';
@@ -55,7 +56,8 @@ import { LoaderInterceptor } from './loader/loader.interceptor';
     AppRoutingModule,
     NgxSpinnerModule,
     MatProgressSpinnerModule,
-    DragDropModule
+    DragDropModule,
+    MatMenuModule
   ],
   providers: [LoaderService,
               {provide: HTTP_INTERCEPTORS, useClass: LoaderInterceptor, multi: true},

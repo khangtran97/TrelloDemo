@@ -5,9 +5,17 @@
                 <div class="logo-trello">
             </div>
         </a>
+        <div class="user-icon">
+            <button mat-button [matMenuTriggerFor]="menu" (click)="isEditUser()">DT</button>
+            <mat-menu class="modify-image" #menu="matMenu">
+                <button mat-menu-item>Item 1</button>
+                <button mat-menu-item>Item 2</button>
+            </mat-menu>
+        </div>
+        
     </div>    
     <div class="body-content">
-        <div id="content">
+        <div class="content">
             <div class="board-wrapper" cdkDropListGroup>
                 <div class="board-main-content" cdkDropList [cdkDropListData]="categories" cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)">
                     <div class="list-wrapper" *ngFor="let categ of categories; index as i" cdkDrag>

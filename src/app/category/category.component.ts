@@ -15,12 +15,13 @@ class ViewCategory implements Category {
 @Component({
     selector: 'app-category',
     templateUrl: './category.component.html',
-    styleUrls: ['./category.component.css']
+    styleUrls: ['./category.component.scss']
 })
 export class CategoryComponent implements OnInit, OnDestroy, AfterViewInit {
     userIsAuthenticated = false;
     userId: string;
     isLoading = false;
+    isEditUserImage:boolean = false;
     public isEdit: boolean = false;
     public isShowAddList: boolean = false;
     categoriesData: Category[] = [];
@@ -88,6 +89,10 @@ export class CategoryComponent implements OnInit, OnDestroy, AfterViewInit {
         this.categService.deleteCategory(categId).subscribe(() => {
             this.categService.getCategory();
         });
+    }
+
+    isEditUser() {
+        this.isEditUserImage = !this.isEditUserImage;
     }
 
     ngOnDestroy() {

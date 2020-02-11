@@ -14,7 +14,7 @@ export class CommentService {
     constructor(private http: HttpClient) {}
 
     getComments() {
-        this.http.get<{message: string; comments: any}>(
+        return this.http.get<{message: string; comments: any}>(
             'http://localhost:3000/comment'
         )
         .pipe(
@@ -30,13 +30,7 @@ export class CommentService {
                     })
                 };
             })
-        )
-        .subscribe(transformCommentData => {
-            this.comments = transformCommentData.comments;
-            this.commentsUpdated.next(
-                [...this.comments]
-            );
-        });
+        );
     }
 
     getCommentUpdateListener() {

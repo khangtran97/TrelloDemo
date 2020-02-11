@@ -1,0 +1,227 @@
+a {
+    color: #172b4d;
+}
+
+
+
+.placeholder {
+    display: block;
+    text-align: left;
+}
+
+.add-icon {
+    padding-top: 3px;
+    margin-right: 2px;
+    font-size: 14px;
+}
+
+.control-button {
+    display: flex;
+    margin: 8px 0;
+    .btn {
+        float: left;
+        min-height: 32px;
+        height: 32px;
+        margin-top: 0;
+        padding-top: 4px;
+        padding-bottom: 4px;
+    }
+    .material-icons {
+        padding-top: 3px;
+        margin: 0 5px;
+        cursor: pointer;
+    }
+}
+
+.icon-close-add-form {
+    padding-top: 3px;
+    margin: 0 5px;
+    cursor: pointer;
+}
+
+.card-title {
+    background-color: #fff;
+    border-radius: 3px;
+    box-shadow: 0 1px 0 rgba(9,30,66,.25);
+    cursor: pointer;
+    display: block;
+    margin: 8px 0;
+    max-width: 300px;
+    min-height: 20px;
+    position: relative;
+    text-decoration: none;
+    z-index: 0;
+    &:hover {
+        background-color: #f4f5f7;
+    border-bottom-color: rgba(9,30,66,.25);
+    }
+    .vote-card {
+        margin-left: 8px;
+        margin-bottom: 2px;
+        padding: 2px;
+        display: inline-block;
+        &:hover {
+            background-color: #ebecf0;
+            border-radius: 3px;
+        }
+        .icon-vote-card {
+            cursor: pointer;
+            background-clip: padding-box;
+            background-origin: padding-box;
+            border-radius: 3px;
+            opacity: 0.8;   
+            .material-icons {
+                font-size: 20px;
+            }            
+        }        
+    }
+}
+
+.icon-edit-card {
+    float: right;
+    cursor: pointer;
+    background-clip: padding-box;
+    background-origin: padding-box;
+    border-radius: 3px;
+    opacity: .8;
+    position: inherit;
+    margin: 2px;
+    &:hover {
+        background-color: #ebecf0;
+        border-radius: 3px;
+    }
+    .material-icons {
+        font-size: 20px;
+        padding: 3px;
+    }
+}
+
+.list-card-details {
+    overflow: hidden;
+    padding: 6px 8px 2px;
+    position: relative;
+    .list-card-title {
+        font-weight: normal;
+        float: left;
+        clear: both;
+        display: block;
+        max-width: 220px;
+        height: auto;
+        margin: 0 0 4px;
+        overflow: hidden;
+        text-decoration: none;
+        word-wrap: break-word;
+        white-space: pre-line;
+        color: #172b4d;
+    }
+}
+
+.list-card {
+    background-color: #fff;
+    border-radius: 3px;
+    box-shadow: 0 1px 0 rgba(9,30,66,.25);
+    cursor: pointer;
+    display: block;
+    margin-bottom: 8px;
+    max-width: 300px;
+    min-height: 20px;
+    position: relative;
+    text-decoration: none;
+    z-index: 0;
+    .input-card-form {
+        overflow: hidden;
+        padding: 0;
+        position: relative;
+    }
+}
+
+
+
+.input-card-edit-form {
+    width: 260px;
+    max-height: 100%;
+    background-color: #ebecf0;
+    border: 1px solid #ebecf0;
+    font-weight: 600;
+    color: #172b4d;
+    .editCardTitle {
+        border-radius: 3px;
+        margin: 2px 0;
+        width: inherit;
+        max-width: 260px;
+        min-height: 54px;
+        max-height: 162px;
+        resize: none;
+        color: #172b4d;
+        box-sizing: border-box;
+        -webkit-appearance: none;
+    }
+}
+
+
+.form-field {
+    margin-top: 3px;
+    background: #fff;
+    border: none;
+    box-shadow: inset 0 0 0 2px white;
+    display: block;
+    width: 100%;
+    max-height: 162px;
+    min-height: 54px;
+    color: #172b4d;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    border-radius: 3px;
+    padding: 6px 8px 2px;
+    margin-bottom: 4px;
+    resize: none;
+}
+
+.card-composer {
+    cursor: pointer;
+    .open-add-card {
+        width: -webkit-fill-available;
+        border-radius: 3px;
+        background-color: #ebecf0;
+        color: #172b4d;
+        display: block;
+        flex: 1 0 auto;
+        padding: 4px 8px;
+        position: relative;
+        text-decoration: none;
+        &:hover {
+            background-color: rgba(9,30,66,.08);
+        }
+    }
+}
+
+.modal-header {
+    background-color: #ebecf0;
+    .icon-modal-title {
+        font-size: 20px;
+        color: #42526e;
+    }
+    .card-modal-title {
+        margin: -3px 4px 2px;
+    }
+    .card-modal-category {
+        cursor: default;
+        display: inline-block;
+        margin: 4px 8px 4px 2px;
+        a {
+            &:hover {
+                text-decoration: underline;
+                cursor: pointer;
+            }
+        }
+        .current-list {
+            display: inline-block;
+        }
+    }
+}
+
+.modal-body {
+    background-color: #ebecf0;
+}
+
+

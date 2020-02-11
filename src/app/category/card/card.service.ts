@@ -2,27 +2,24 @@ import { Injectable, OnDestroy, OnInit, Input } from '@angular/core';
 import { Card } from './card.model';
 import { HttpClient } from '@angular/common/http';
 import { CategoryService } from '../category.service';
-import { Subscription, Subject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Subscription, Subject, BehaviorSubject, Observable } from 'rxjs';
+import { map, mergeMap } from 'rxjs/operators';
 import { Category } from '../category.model';
+import { Vote } from './vote.model';
 
 @Injectable({ providedIn: 'root'})
 
 export class CardService {
     cards: Card[] = [];
+    votes: Vote[] = [];
     public cardsUpdated = new Subject<Card[]>();
     private categoriesSub: Subscription;
 
     constructor(private http: HttpClient,
-                private categService: CategoryService) {
-                    // this.categService.getCategory();
-                    // this.categoriesSub =  this.categService.getCategUpdateListener().subscribe(item => {
-                    //     this.category = [...item.categories];
-                    // });
-                }
+                private categService: CategoryService) {}
 
     getCards() {
-        this.http.get<{message: string; cards: any}>(
+        return this.http.get<{message: string; cards: any}>(
             'http://localhost:3000/card'
         )
         .pipe(
@@ -34,18 +31,13 @@ export class CardService {
                             title: card.title,
                             description: card.description,
                             comment: card.comment,
-                            category: card.category
+                            category: card.category,
+                            vote: card.votes
                         };
                     })
                 };
             })
-        )
-        .subscribe(transformCardData => {
-            this.cards = transformCardData.cards;
-            this.cardsUpdated.next(
-                [...this.cards]
-            );
-        });
+        );
     }
 
     getCardUpdateListener() {

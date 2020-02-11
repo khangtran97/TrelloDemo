@@ -7,6 +7,8 @@ import { Subscription } from 'rxjs';
 import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from 'src/app/auth/auth.service';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { VoteCardCommentService } from './vote.service';
+import { Vote } from './vote.model';
 
 class ViewCard implements Card {
     id: string;
@@ -20,7 +22,7 @@ class ViewCard implements Card {
 @Component({
     selector: 'app-card',
     templateUrl: './card.component.html',
-    styleUrls: ['./card.component.css']
+    styleUrls: ['./card.component.scss']
 })
 
 export class CardComponent implements OnInit, OnDestroy {
@@ -32,6 +34,7 @@ export class CardComponent implements OnInit, OnDestroy {
     isShowAddComment: boolean = false;
     inputMemberCardForm: FormGroup;
     public cards: ViewCard[] = [];
+    public votes: Vote[] = [];
     private cardsSub: Subscription;
     cardsByCategoryID: Card[];
 
@@ -40,7 +43,8 @@ export class CardComponent implements OnInit, OnDestroy {
     constructor(private cardService: CardService,
                 private fb: FormBuilder,
                 private modalService: NgbModal,
-                private authService: AuthService) {}
+                private authService: AuthService,
+                private voteCardService: VoteCardCommentService) {}
 
     ngOnInit() {
         this.inputCardForm = this.fb.group({
@@ -49,21 +53,40 @@ export class CardComponent implements OnInit, OnDestroy {
         this.inputEditCardForm = this.fb.group({
             textCardEdit: ['', [Validators.required, Validators.minLength(3)]]
         });
-        this.cardService.getCards();
-        this.cardsSub = this.cardService.getCardUpdateListener().subscribe(data => {
-            let arrayCard = [];
-            for (let i = 0; i< data.length; i++) {
+
+        this.filterCards();
+        // console.log(this.voteCardService.getVote().subscribe(data => {}));
+        // this.voteCardService.getVote().subscribe(data => {
+        //     const arrayVotes = data.votes;
+        //     console.log(arrayVotes);
+        //     for(let i = 0; i < this.cards.length; i++) {
+        //         this.votes = arrayVotes.filter(vote => vote.card === this.cards[i].id);
+
+        //     }
+        // });
+    }
+
+    filterCards() {
+        this.cardService.getCards().subscribe((data) => {
+            console.log(data);
+            const cards = data.cards;
+            const arrayCard = [];
+            for (let i = 0; i < cards.length; i++) {
                 arrayCard.push({
-                    id: data[i].id,
-                    title: data[i].title,
-                    description: data[i].description,
-                    comment: data[i].comment,
-                    category: data[i].category,
+                    id: cards[i].id,
+                    title: cards[i].title,
+                    description: cards[i].description,
+                    comment: cards[i].comment,
+                    category: cards[i].category,
                     editing: false
                 });
             }
             this.cards = arrayCard.filter(card => card.category === this.category.id);
         });
+    }
+
+    voteCard(index, category) {
+        this.voteCardService.addVote(category, this.cards[index].id, localStorage.getItem('userId'));
     }
 
     onAddCard() {
@@ -91,7 +114,7 @@ export class CardComponent implements OnInit, OnDestroy {
             this.inputEditCardForm.get('textCardEdit').value,
             category,
             () => {
-                this.cardService.getCards();
+                this.filterCards();
             });
     }
 
@@ -100,7 +123,7 @@ export class CardComponent implements OnInit, OnDestroy {
             this.inputCardForm.value.title,
             category,
             () => {
-                this.cardService.getCards();
+                this.filterCards();
                 this.onCancelCard();
             }
         );
@@ -109,13 +132,12 @@ export class CardComponent implements OnInit, OnDestroy {
     onDeleteCard(index, cardId) {
         this.cards[index].id = cardId;
         this.cardService.deleteCard(cardId).subscribe(() => {
-            this.cardService.getCards();
+            this.filterCards();
         },
         (err) => console.log(err));
     }
 
     openLg(content) {
-        // this.authService.getAuthStatusListener();
         this.modalService.open(content, { size: 'lg' }).result.then(
             (result) => {
                 this.isShowAddComment = this.closeModal(result);
@@ -134,7 +156,6 @@ export class CardComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.cardsSub.unsubscribe();
     }
 
     drop(event: CdkDragDrop<string[]>) {
