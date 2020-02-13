@@ -9,7 +9,8 @@
                     </span>
                 </div>
                 <div class="vote-card" *ngIf="!cards[i].editing">
-                    <span class="icon-vote-card" (click)="voteCard(i,category)"><i class="material-icons">thumb_up</i></span>
+                    <span class="icon-vote-card" (click)="voteCard(i,card.id,category.id)"><i class="material-icons">thumb_up</i></span>
+                    <div class="quantity-vote-card" *ngIf="cards[i].votes">{{cards[i].votes.length}}</div>
                 </div>
                 <ng-container *ngIf="cards[i].editing">
                     <form [formGroup]="inputEditCardForm" (ngSubmit)="onEditCard(i,category)" class="input-card-edit-form">

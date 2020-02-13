@@ -209,24 +209,34 @@ function getVoteListByCardId(cardId) {
     return Vote.find({ card: cardId });
 }
 
-app.get('/card', async (req, res) => {   
-    function process() {
-        return getCardList().then((cards) => {
-             return Promise.all(cards.map(async card => {
-                    const votes = await getVoteListByCardId(card._id);
-                    if (votes) {
-                        card.set('votes', votes, { strict: false });
-                    }
-                return card;
-            }));
-        });
-    }
+// app.get('/card', (req, res) => {
+//     function process() {
+//         return getCardList().then((cards) => {
+//             return Promise.all(cards.map(async card => {
+//                 const votes = await getVoteListByCardId(card._id);
+//                 if (votes && votes.length > 0) {
+//                     // card.set('votes', votes, { strict: false });
+//                     card = card.toObject();
+//                     card.votes = votes;
+//                 }
+//                 return card;
+//             }));
+//         });
+//     }
 
-    process().then((result) => {
-        console.log(`result`, result);
+//     process().then((result) => {
+//         res.status(200).json({
+//             message: 'Card retrieved succesfully!',
+//             cards: result
+//         });
+//     });
+// });
+
+app.route('/card').get((req, res) => {
+    Card.find().then(data => {
         res.status(200).json({
-            message: 'Card retrieved succesfully!',
-            cards: result
+            message: 'Vote retrieved succesfully!',
+            cards: data
         });
     });
 });
@@ -335,38 +345,30 @@ app.route('/comment/:id').put(checkAuth, (req, res) => {
     });
 });
 
+
+//------------------VOTE---------------------------
 app.route('/vote').post((req, res) => {
-    const vote = new Vote({
-        category: req.body.category,
-        card: req.body.card,
-        user: req.body.user
-    });
-    vote.save().then(createdVote => {
-        res.status(201).json({
-            message: 'Comment added succesfully!',
-            vote: {
-                id: createdVote._id,
-                category: createdVote.content,
-                card: createdVote.card,
-                user: createdVote.user
-            }
-        });
-    }).catch(err => {
-        console.log(err),
-            res.status(500).json({
-                error: err
+    Card.findOneAndUpdate(
+        { "_id": req.body.id },
+        {$push: {votes: {user: req.body.user}}}
+    ).then(result => {
+        if (!result) {
+            return res.status(404).json({
+                message: 'Card not found with id ' + req.body.id
             });
-    });
+        }
+        res.status(200).json({ message: 'Add vote succeccfully!' });
+    })
 });
 
-app.route('/vote').get((req, res) => {
-    Vote.find().then(data => {
-        res.status(200).json({
-            message: 'Vote retrieved succesfully!',
-            votes: data
-        });
-    });
-});
+// app.route('/vote').get((req, res) => {
+//     Vote.find().then(data => {
+//         res.status(200).json({
+//             message: 'Vote retrieved succesfully!',
+//             votes: data
+//         });
+//     });
+// });
 
 module.exports = app;
 // export { app, mongoose, jwt };

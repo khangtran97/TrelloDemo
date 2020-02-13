@@ -7,6 +7,15 @@ import { map, mergeMap } from 'rxjs/operators';
 import { Category } from '../category.model';
 import { Vote } from './vote.model';
 
+// class ViewCard implements Card {
+//     id: string;
+//     title: string;
+//     description: string;
+//     comment: string;
+//     category: string;
+//     votes: Vote;
+// }
+
 @Injectable({ providedIn: 'root'})
 
 export class CardService {
@@ -53,7 +62,7 @@ export class CardService {
         });
     }
 
-    updateCard(Id: string, Title, category: Category, callback) {
+    updateCard(Id: string, Title, category: Category, User: string, callback) {
         let cardData: Card;
         cardData = {
             id: Id,

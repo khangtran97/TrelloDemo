@@ -73,7 +73,16 @@ a {
             .material-icons {
                 font-size: 20px;
             }            
-        }        
+        }
+    }
+    .quantity-vote-card {
+        display: inline-block;
+        position: absolute;
+        margin-top: 2px;
+        margin-left: 4px;
+        .quantities-vote-card {
+            
+        }
     }
 }
 
@@ -216,6 +225,7 @@ a {
         }
         .current-list {
             display: inline-block;
+            margin-top: 2px;
         }
     }
 }

@@ -4,11 +4,12 @@ import { Card } from './card.model';
 import { Category } from '../category.model';
 import { CardService } from './card.service';
 import { Subscription } from 'rxjs';
-import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from 'src/app/auth/auth.service';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { VoteCardCommentService } from './vote.service';
 import { Vote } from './vote.model';
+import { filter } from 'rxjs/operators';
 
 class ViewCard implements Card {
     id: string;
@@ -16,6 +17,7 @@ class ViewCard implements Card {
     description: string;
     comment: string;
     category: string;
+    votes: Vote[];
     editing: boolean = false;
 }
 
@@ -34,17 +36,16 @@ export class CardComponent implements OnInit, OnDestroy {
     isShowAddComment: boolean = false;
     inputMemberCardForm: FormGroup;
     public cards: ViewCard[] = [];
-    public votes: Vote[] = [];
     private cardsSub: Subscription;
     cardsByCategoryID: Card[];
 
     @Input('category') category: Category;
 
     constructor(private cardService: CardService,
-                private fb: FormBuilder,
-                private modalService: NgbModal,
-                private authService: AuthService,
-                private voteCardService: VoteCardCommentService) {}
+        private fb: FormBuilder,
+        private modalService: NgbModal,
+        private authService: AuthService,
+        private voteCardService: VoteCardCommentService) { }
 
     ngOnInit() {
         this.inputCardForm = this.fb.group({
@@ -68,7 +69,6 @@ export class CardComponent implements OnInit, OnDestroy {
 
     filterCards() {
         this.cardService.getCards().subscribe((data) => {
-            console.log(data);
             const cards = data.cards;
             const arrayCard = [];
             for (let i = 0; i < cards.length; i++) {
@@ -78,6 +78,7 @@ export class CardComponent implements OnInit, OnDestroy {
                     description: cards[i].description,
                     comment: cards[i].comment,
                     category: cards[i].category,
+                    votes: cards[i].vote,
                     editing: false
                 });
             }
@@ -85,8 +86,35 @@ export class CardComponent implements OnInit, OnDestroy {
         });
     }
 
-    voteCard(index, category) {
-        this.voteCardService.addVote(category, this.cards[index].id, localStorage.getItem('userId'));
+    voteCard(index, cardId, categoryId) {
+        console.log(this.cards);
+        const cards = this.cards;
+        let voted = false;
+        if (cards[index].votes) {
+            cards[index].votes.map(vote => {
+                if(vote.user === localStorage.getItem('userId'))
+            })
+        }
+        for(let i = 0; i < cards.length; i++) {
+            if (cards[i].votes) {
+                cards[i].votes.map(vote => {
+                    if (vote.user === localStorage.getItem('userId')) {
+                        voted = true;
+                    } else {
+                        voted = false;
+                    }
+                });
+            }
+        }
+        console.log(voted);
+        // this.voteCardService.addVote(
+        //     cardId,
+        //     this.cards[index].title,
+        //     categoryId,
+        //     localStorage.getItem('userId'),
+        //     () => {
+        //         this.filterCards();
+        //     });
     }
 
     onAddCard() {
@@ -113,6 +141,7 @@ export class CardComponent implements OnInit, OnDestroy {
             this.cards[index].id,
             this.inputEditCardForm.get('textCardEdit').value,
             category,
+            null,
             () => {
                 this.filterCards();
             });
@@ -134,7 +163,7 @@ export class CardComponent implements OnInit, OnDestroy {
         this.cardService.deleteCard(cardId).subscribe(() => {
             this.filterCards();
         },
-        (err) => console.log(err));
+            (err) => console.log(err));
     }
 
     openLg(content) {

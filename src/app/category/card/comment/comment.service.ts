@@ -51,7 +51,7 @@ export class CommentService {
         commentData = {
             id: Id,
             content: Content,
-            creator: createAotUrlResolver,
+            creator: Creator,
             card: card.id,
             user: userId
         };
