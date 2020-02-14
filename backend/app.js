@@ -20,7 +20,8 @@ const UserModel = new mongoose.model('user', UserSchema);
 
 const app = express();
 const db = mongoose.connection;
-mongoose.connect('mongodb+srv://khang_1:5HyIHdbXVJp5eCYp@cluster0-8f4qo.mongodb.net/trello-angular?retryWrites=true&w=majority')
+const connectStr = 'mongodb+srv://khang_1:5HyIHdbXVJp5eCYp@cluster0-8f4qo.mongodb.net/trello-angular?retryWrites=true&w=majority'
+mongoose.connect(connectStr)
     .then(() => {
         console.log('Connected to database');
     })
@@ -283,6 +284,14 @@ app.route('/card/:id').delete((req, res, next) => {
 
 
 // Comment
+function getCommentList() {
+    return Comment.find();
+}
+
+function getUserNameByCommentId(userId) {
+    return User.find({ user: userId });
+}
+
 app.route('/comment').get((req, res) => {
     CardComment.find().then(data => {
         res.status(200).json({
@@ -350,7 +359,7 @@ app.route('/comment/:id').put(checkAuth, (req, res) => {
 app.route('/vote').post((req, res) => {
     Card.findOneAndUpdate(
         { "_id": req.body.id },
-        {$push: {votes: {user: req.body.user}}}
+        { $push: { votes: { user: req.body.user } } }
     ).then(result => {
         if (!result) {
             return res.status(404).json({
@@ -361,14 +370,48 @@ app.route('/vote').post((req, res) => {
     })
 });
 
-// app.route('/vote').get((req, res) => {
-//     Vote.find().then(data => {
-//         res.status(200).json({
-//             message: 'Vote retrieved succesfully!',
-//             votes: data
-//         });
-//     });
-// });
+app.route('/vote/:id').put((req, res) => {
+    Card.update(
+        { "_id": req.body.id },
+        { $pull: { 'votes': { 'user': req.body.user } } }
+    ).then(result => {
+        if (!result) {
+            return res.status(404).json({
+                message: 'Card not found with id ' + req.body.id
+            });
+        }
+        res.status(200).json({ message: 'Remove vote succeccfully!' });
+    })
+})
+
+//---------------LIKE--------------------------
+app.route('/like').post((req, res) => {
+    CardComment.findOneAndUpdate(
+        { "_id": req.body.id },
+        { $push: { likes: { card: req.body.card, user: req.body.user } } }
+    ).then(result => {
+        if (!result) {
+            return res.status(404).json({
+                message: 'Comment not found with id ' + req.body.id
+            });
+        }
+        res.status(200).json({ message: 'Add like succeccfully!' });
+    })
+});
+
+app.route('/like/:id').put((req, res) => {
+    CardComment.update(
+        { "_id": req.body.id },
+        { $pull: { 'likes': { 'user': req.body.user } } }
+    ).then(result => {
+        if (!result) {
+            return res.status(404).json({
+                message: 'Comment not found with id ' + req.body.id
+            });
+        }
+        res.status(200).json({ message: 'Remove like succeccfully!' });
+    })
+})
 
 module.exports = app;
 // export { app, mongoose, jwt };

@@ -22,32 +22,6 @@ export class VoteCardCommentService {
 
     constructor(private http: HttpClient) {}
 
-    // getVote() {
-    //     return this.http.get<{message: string; votes: any}>(
-    //         'http://localhost:3000/vote'
-    //     )
-    //     .pipe(
-    //         map(voteData => {
-    //             return {
-    //                 votes: voteData.votes.map(vote => {
-    //                     return {
-    //                         id: vote._id,
-    //                         category: vote.category,
-    //                         card: vote.card,
-    //                         user: vote.user
-    //                     };
-    //                 })
-    //             };
-    //         })
-    //     );
-    // }
-
-    // addVote(categoryID: String, cardId: string, userId: string) {
-    //     const vote = { id: null, category: categoryID, card: cardId, user: userId };
-    //     this.http
-    //     .post<{message: string, vote: Vote}>('http://localhost:3000/vote', vote);
-    // }
-
     addVote(Id: string, Title, category: Category, User: string, callback) {
         let cardData: ViewCard;
         cardData = {
@@ -63,5 +37,15 @@ export class VoteCardCommentService {
             .subscribe(response => {
                 callback();
             });
+    }
+
+    deleteVote(Id: string, userId: string) {
+        let data: any;
+        data = {
+            id: Id,
+            user: userId
+        };
+        return this.http
+        .put('http://localhost:3000/vote/' + Id, data);
     }
 }

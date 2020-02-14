@@ -24,8 +24,10 @@ export class CommentService {
                         return {
                             id: comment._id,
                             content: comment.content,
+                            creator: comment.creator,
                             card: comment.card,
-                            user: comment.user
+                            user: comment.user,
+                            like: comment.likes
                         };
                     })
                 };
@@ -65,5 +67,5 @@ export class CommentService {
     deleteComment(commentId: string) {
         return this.http
         .delete('http://localhost:3000/comment/' + commentId);
-  }
+    }
 }

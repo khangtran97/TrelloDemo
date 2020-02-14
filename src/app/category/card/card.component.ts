@@ -56,15 +56,6 @@ export class CardComponent implements OnInit, OnDestroy {
         });
 
         this.filterCards();
-        // console.log(this.voteCardService.getVote().subscribe(data => {}));
-        // this.voteCardService.getVote().subscribe(data => {
-        //     const arrayVotes = data.votes;
-        //     console.log(arrayVotes);
-        //     for(let i = 0; i < this.cards.length; i++) {
-        //         this.votes = arrayVotes.filter(vote => vote.card === this.cards[i].id);
-
-        //     }
-        // });
     }
 
     filterCards() {
@@ -87,34 +78,31 @@ export class CardComponent implements OnInit, OnDestroy {
     }
 
     voteCard(index, cardId, categoryId) {
-        console.log(this.cards);
-        const cards = this.cards;
-        let voted = false;
-        if (cards[index].votes) {
-            cards[index].votes.map(vote => {
-                if(vote.user === localStorage.getItem('userId'))
-            })
-        }
-        for(let i = 0; i < cards.length; i++) {
-            if (cards[i].votes) {
-                cards[i].votes.map(vote => {
-                    if (vote.user === localStorage.getItem('userId')) {
-                        voted = true;
-                    } else {
-                        voted = false;
-                    }
-                });
+        const voteSelected = this.cards[index].votes;
+        const currentUser = localStorage.getItem('userId');
+        let checkVoted = true;
+        if (typeof voteSelected !== 'undefined' && voteSelected.length > 0) {
+            for (let i = 0; i < voteSelected.length; i++) {
+                if (voteSelected[i].user === currentUser) {
+                    checkVoted = false;
+                    this.voteCardService.deleteVote(cardId, currentUser).subscribe(() => {
+                        this.filterCards();
+                    });
+                    return;
+                }
             }
         }
-        console.log(voted);
-        // this.voteCardService.addVote(
-        //     cardId,
-        //     this.cards[index].title,
-        //     categoryId,
-        //     localStorage.getItem('userId'),
-        //     () => {
-        //         this.filterCards();
-        //     });
+
+        if (checkVoted) {
+            this.voteCardService.addVote(
+                cardId,
+                this.cards[index].title,
+                categoryId,
+                currentUser,
+                () => {
+                    this.filterCards();
+                });
+        }
     }
 
     onAddCard() {

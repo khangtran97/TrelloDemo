@@ -7,6 +7,8 @@ import { Subscription } from 'rxjs';
 import { Comment } from './comment.model';
 import { AuthService } from 'src/app/auth/auth.service';
 import { User } from 'src/app/register/user.model';
+import { LikeCommentService } from './like.service';
+import { Like } from './like.model';
 
 class ViewComment implements Comment {
     id: string;
@@ -14,6 +16,8 @@ class ViewComment implements Comment {
     creator: string;
     card: string;
     user: string;
+    username: string;
+    likes: Like[];
     editing: boolean = false;
 }
 
@@ -38,7 +42,8 @@ export class CommentComponent implements OnInit, OnDestroy {
 
     constructor(private commentService: CommentService,
                 private fb: FormBuilder,
-                private authService: AuthService) {}
+                private authService: AuthService,
+                private likeService: LikeCommentService) {}
 
     ngOnInit() {
         this.inputMemberCardForm = this.fb.group({
@@ -63,6 +68,7 @@ export class CommentComponent implements OnInit, OnDestroy {
                     creator: comments[i].creator,
                     card: comments[i].card,
                     user: comments[i].user,
+                    likes: comments[i].like,
                     editing: false
                 });
             }
@@ -85,6 +91,35 @@ export class CommentComponent implements OnInit, OnDestroy {
                     this.filterComment();
                     this.inputMemberCardForm.reset();
         });
+    }
+
+    likeComment(index, cardId, commentId) {
+        const commentSelected = this.comments[index].likes;
+        const currentUser = localStorage.getItem('userId');
+        let checkLiked = true;
+        if (typeof commentSelected !== 'undefined' && commentSelected.length > 0) {
+            for (let i = 0; i < commentSelected.length; i++) {
+                if (commentSelected[i].user === currentUser) {
+                    checkLiked = false;
+                    this.likeService.deleteLike(commentId, currentUser).subscribe(() => {
+                        this.filterComment();
+                    });
+                    return;
+                }
+            }
+        }
+
+        if (checkLiked) {
+            this.likeService.addLike(
+                commentId,
+                this.comments[index].content,
+                this.comments[index].creator,
+                cardId,
+                localStorage.getItem('userId'),
+                () => {
+                    this.filterComment();
+                });
+        }
     }
 
     onDelete(commentId: string) {

@@ -25,7 +25,7 @@
         </div>
         <div class="comment-desc">
             <span class="comment-desc-member">
-                {{comment.user}}
+                {{comment.creator}}
             </span>
             <div class="comment-desc-container">
                 <div class="comment-desc-wrap">
@@ -48,12 +48,18 @@
                         </ng-container>
                     </div>                    
                 </div>
-                <span class="icon-vote-card"><i class="material-icons">thumb_up</i></span>
-                <div class="comment-desc-edit" *ngIf="userIsAuthenticated && userId === comment.user">                    
-                    <span class="comment-desc-editdel">
-                        <a class="edit-action" (click)="onEditingComment(i)">Edit</a> - 
-                        <a class="delete-action" (click)="onDelete(comment.id)">Delete</a>
-                    </span>
+                <div class="comment-desc-edit">
+                    <div class="like-comment">
+                        <span class="icon-vote-card" (click)="likeComment(i, card.id, comment.id)"><i class="material-icons">thumb_up</i></span>                        
+                        <div class="quantity-vote-card">{{comments[i].likes.length}}</div>                        
+                    </div>
+                    <div class="comment-edit-del"  *ngIf="userIsAuthenticated && userId === comment.user">
+                        <span class="comment-desc-editdel">
+                            <a class="edit-action" (click)="onEditingComment(i)">Edit</a> - 
+                            <a class="delete-action" (click)="onDelete(comment.id)">Delete</a>
+                        </span>
+                    </div>                     
+                    
                 </div>
             </div>
         </div>
