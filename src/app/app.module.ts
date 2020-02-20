@@ -3,20 +3,30 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
-import { Routes, RouterModule } from '@angular/router';
-import { MatSelectModule } from '@angular/material/select';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material';
 import { AutosizeModule } from 'ngx-autosize';
-import { NgxSpinnerModule } from 'ngx-spinner';
+import {
+  MatProgressSpinnerModule,
+  MatButtonModule,
+  MatCardModule,
+  MatSelectModule,
+  MatIconModule,
+  MatMenuModule,
+  MatTableModule,
+  MatPaginatorModule,
+  MatSortModule,
+  MatCheckboxModule,
+  MatDialogModule,
+  MatFormFieldModule,
+  MatInputModule
+} from '@angular/material';
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import {MatMenuModule} from '@angular/material/menu';
-
 import { AppComponent } from './app.component';
 import { RegisterComponent } from './register/register.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LoginComponent } from './login/login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { MaterialModule } from './material.module';
+import { NgxSpinnerModule } from 'ngx-spinner';
 // import { AuthGuardService as AuthGuard} from './auth/auth-guard.service';
 import { AuthGuard } from './auth/auth.guard';
 import { CategoryComponent } from './category/category.component';
@@ -30,6 +40,8 @@ import { AuthService } from './auth/auth.service';
 import { LoaderComponent } from './loader/loader.component';
 import { LoaderService } from './loader/loader.service';
 import { LoaderInterceptor } from './loader/loader.interceptor';
+import { ManageUserComponent } from './mange-user/mange-user.component';
+import { DialogBoxComponent } from './mange-user/dialog-box/dialog-box.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +53,9 @@ import { LoaderInterceptor } from './loader/loader.interceptor';
     CardComponent,
     HomeComponent,
     CommentComponent,
-    LoaderComponent
+    LoaderComponent,
+    ManageUserComponent,
+    DialogBoxComponent
   ],
   imports: [
     BrowserModule,
@@ -49,15 +63,28 @@ import { LoaderInterceptor } from './loader/loader.interceptor';
     BrowserAnimationsModule,
     HttpClientModule,
     ReactiveFormsModule,
-    MatSelectModule,
-    MatIconModule,
     AutosizeModule,
     NgbModule,
     AppRoutingModule,
-    NgxSpinnerModule,
     MatProgressSpinnerModule,
+    MatButtonModule,
+    MatCardModule,
+    MatSelectModule,
+    MatIconModule,
+    MatMenuModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
     DragDropModule,
-    MatMenuModule
+    MaterialModule,
+    NgxSpinnerModule,
+    MatCheckboxModule
+  ],
+  entryComponents: [
+    DialogBoxComponent
   ],
   providers: [LoaderService,
               {provide: HTTP_INTERCEPTORS, useClass: LoaderInterceptor, multi: true},

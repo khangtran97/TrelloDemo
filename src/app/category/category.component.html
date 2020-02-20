@@ -5,11 +5,14 @@
                 <div class="logo-trello">
             </div>
         </a>
+        <div class="admin-button" *ngIf="isAdmin">
+            <button class="btn btn-success" (click)="manageUser()">Manage User</button>
+        </div>
         <div class="user-icon">
             <button mat-button [matMenuTriggerFor]="menu" (click)="isEditUser()">DT</button>
-            <mat-menu class="modify-image" #menu="matMenu">
-                <button mat-menu-item>Item 1</button>
-                <button mat-menu-item>Item 2</button>
+            <mat-menu class="modify-user" #menu="matMenu">
+                <button mat-menu-item >Manage Profile</button>
+                <button mat-menu-item (click)="logout()">Logout</button>
             </mat-menu>
         </div>
         
@@ -56,5 +59,4 @@
         </div>  
     </div>
 </div>
-<!-- <mat-spinner class="spinner" *ngIf="isLoading"></mat-spinner> -->
 

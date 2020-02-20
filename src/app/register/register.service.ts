@@ -12,7 +12,7 @@ export class RegisterService {
                 private router: Router) {}
 
     createUser(userName: string, password: string) {
-        const user: User = {userName: userName, password: password };
+        const user: User = {id: null, userName: userName, password: password, firstName: null, lastName: null, address: null, role: null};
         this.http
         .post<{ message: string}>('http://localhost:3000/register', user)
         .subscribe(responseData => {

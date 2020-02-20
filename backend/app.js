@@ -13,7 +13,11 @@ const CardComment = require('./models/comment');
 const Vote = require('./models/vote');
 const UserSchema = new mongoose.Schema({
     userName: { type: String, require: true },
-    password: { type: String, require: true }
+    password: { type: String, require: true },
+    firstName: { type: String, require: true },
+    lastName: { type: String, require: true },
+    address: { type: String, require: true },
+    role: { type: String, require: true }
 });
 
 const UserModel = new mongoose.model('user', UserSchema);
@@ -54,6 +58,7 @@ app.post('/register', async (req, res, next) => {
                 if (err) { return next(err); }
                 const user = new UserModel(req.body);
                 user.password = hash;
+                if(user.userName === 'admin@gmail.com') { user.role = 'ADMIN' }
                 user.save((err, result) => {
                     if (err) { return res.json({ err }); }
                     res.status(200).json({ user: result });
@@ -93,7 +98,11 @@ app.route('/login').post((req, res) => {
                 token,
                 expiresIn: 3600,
                 userId: fetchedUser._id,
-                userName: fetchedUser.userName
+                userName: fetchedUser.userName,
+                firstName: fetchedUser.firstName,
+                lastName: fetchedUser.lastName,
+                address: fetchedUser.address,
+                role: fetchedUser.role
             });
         })
         .catch(err => {
@@ -102,6 +111,67 @@ app.route('/login').post((req, res) => {
             });
         });
 });
+
+app.get('/user/:id', (req, res) => {
+    UserModel.findOne({ '_id': req.params.id }).then(user => {
+        if(user) {
+            res.status(200).json(user)
+        } else {
+            return res.status(404).json({
+                message: 'User not found with id ' + req.params.id
+            });
+        }        
+    })
+});
+
+app.get('/user', (req, res) => {
+    UserModel.find().then(data => {
+        res.status(200).json({
+            message: 'Categories retrieved successfully!',
+            users: data
+        })
+    })
+})
+
+app.put('/user/:id', (req, res) => {
+    UserModel.findByIdAndUpdate(req.params.id, req.body).then(result => {
+        if (!result) {
+            return res.status(404).json({
+                message: 'User not found with id ' + req.body.id
+            });
+        }
+        res.status(200).json({ message: 'User updated succeccfully!' });
+    }).catch(err => {
+        if (err.kind === 'ObjectId' || err.name === 'NotFound') {
+            return res.status(404).json({
+                message: 'User not found with id ' + req.body.id
+            });
+        }
+        return res.status(500).json({
+            message: 'Could not update User with id ' + req.body.id
+        });
+    });
+})
+
+app.delete('/user/:id', (req, res) => {
+    UserModel.deleteOne({ _id: req.params.id }).then(result => {
+        if (!result) {
+            return res.status(404).json({
+                message: 'card not found with id ' + req.body.id
+            });
+        }
+        res.status(200).json({ message: 'User deleted successfully!' });
+    }).catch(err => {
+        if (err.kind === 'ObjectId' || err.name === 'NotFound') {
+            return res.status(404).json({
+                message: 'User not found with id ' + req.body.id
+            });
+        }
+        return res.status(500).json({
+            message: 'Could not delete User with id ' + req.body.id
+        });
+    });
+})
 
 
 // Category

@@ -53,17 +53,36 @@ a {
                 opacity: .5
             }
         }
+        .admin-button {
+            display: inline-block;
+            position: absolute;
+            top: 5px;
+            right: 50px;
+            .btn {
+                font: {
+                    size: 12px;
+                    weight: bold;
+                }
+            }
+        }
         .user-icon button {
             display: inline-block;
             border-radius: 25em;
             font-size: 12px;
             background-color: #dfe1e6;
             line-height: 32px;
-            width: 32px;
+            min-width: 32px;
+            padding: 0;
             text-align: center;
             cursor: pointer;
         }
     }
+}
+
+::ng-deep .modify-user {
+    position: absolute;
+    top: 6px;
+    right: 3px;
 }
 
 .body-content {

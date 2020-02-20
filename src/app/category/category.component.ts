@@ -5,6 +5,10 @@ import { Subject, Subscription, Observable } from 'rxjs';
 import { CategoryService } from './category.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { AuthService } from '../auth/auth.service';
+import { Router } from '@angular/router';
+import { User } from '../register/user.model';
+import { UserService } from '../register/user.service';
 
 class ViewCategory implements Category {
     id: string;
@@ -20,22 +24,27 @@ class ViewCategory implements Category {
 export class CategoryComponent implements OnInit, OnDestroy, AfterViewInit {
     userIsAuthenticated = false;
     userId: string;
+    userRole: string;
     isLoading = false;
-    isEditUserImage:boolean = false;
+    isAdmin = false;
+    isEditUserImage: boolean = false;
     public isEdit: boolean = false;
     public isShowAddList: boolean = false;
     categoriesData: Category[] = [];
-    private categUpdated = new Subject<Category[]>();
     inputCategForm: FormGroup;
     categories: ViewCategory[] = [];
     private categoriesSub: Subscription;
-    private authStatusSub: Subscription;
+    private user: User[];
+    userInfo: User;
 
 
     constructor(private fb: FormBuilder,
                 private categService: CategoryService,
                 private ref: ChangeDetectorRef,
-                private elemetRef: ElementRef) {}
+                private elemetRef: ElementRef,
+                private authService: AuthService,
+                private userService: UserService,
+                private router: Router) { }
 
     ngOnInit() {
         this.inputCategForm = this.fb.group({
@@ -49,6 +58,12 @@ export class CategoryComponent implements OnInit, OnDestroy, AfterViewInit {
                 arrayCategories.push({ id: items[i].id, title: items[i].title, editing: false });
             }
             this.categories = arrayCategories;
+        });
+        this.userService.getUserById(localStorage.getItem('userId')).subscribe((user: User) => {
+            const { role, userName } = user;
+            if (role && role === 'ADMIN') {
+                this.isAdmin = true;
+            }
         });
     }
 
@@ -91,6 +106,14 @@ export class CategoryComponent implements OnInit, OnDestroy, AfterViewInit {
         });
     }
 
+    logout() {
+        this.authService.logout();
+    }
+
+    manageUser() {
+        this.router.navigate(['/manage-user', localStorage.getItem('userId')]);
+    }
+
     isEditUser() {
         this.isEditUserImage = !this.isEditUserImage;
     }
@@ -101,12 +124,12 @@ export class CategoryComponent implements OnInit, OnDestroy, AfterViewInit {
 
     drop(event: CdkDragDrop<string[]>) {
         if (event.previousContainer === event.container) {
-          moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+            moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
         } else {
-          transferArrayItem(event.previousContainer.data,
-                            event.container.data,
-                            event.previousIndex,
-                            event.currentIndex);
+            transferArrayItem(event.previousContainer.data,
+                event.container.data,
+                event.previousIndex,
+                event.currentIndex);
         }
     }
 }

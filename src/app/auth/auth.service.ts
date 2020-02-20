@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { User } from '../register/user.model';
-import { Subject } from 'rxjs';
+import { Subject, BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router';
+import { map } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root'})
 export class AuthService {
@@ -13,16 +14,18 @@ export class AuthService {
     private tokenTimer: any;
     private userId: string;
     private userName: string;
+    // public role =  new BehaviorSubject<string>('');
+    role: string;
 
     constructor(private http: HttpClient, private router: Router) {}
 
     createUser(email: string, password: string) {
-      const authData: User = {userName: email, password: password};
+      const authData: User = {id: null, userName: email, password: password, firstName: '', lastName: '', address: '', role: ''};
       this.http.post('http://localhost:3000/register', authData)
           .subscribe(response => {
-              console.log(response);
+            //   console.log(response);
           });
-  }
+    }
 
     getToken() {
         return this.token;
@@ -45,8 +48,13 @@ export class AuthService {
     }
 
     login(email: string, password: string) {
-        const authData: User = {userName: email, password: password};
-        this.http.post<{token: string, expiresIn: number, userId: string, userName: string}>('http://localhost:3000/login', authData)
+        const authData: User = {id: null, userName: email, password: password, firstName: null, lastName: null, address: null, role: null};
+        this.http.post<{
+            token: string,
+            expiresIn: number,
+            userId: string,
+            userName: string,
+            role: string}>('http://localhost:3000/login', authData)
             .subscribe(response => {
                 const token = response.token;
                 this.token = token;
@@ -56,6 +64,8 @@ export class AuthService {
                     this.isAuthenticated = true;
                     this.userId = response.userId;
                     this.userName = response.userName;
+                    // this.role.next(response.role);
+                    this.role = response.role;
                     this.authStautusListener.next(true);
                     const now = new Date();
                     const expirationDate = new Date(now.getTime() + expiresInduration * 1000);
@@ -119,6 +129,7 @@ export class AuthService {
         localStorage.removeItem('token');
         localStorage.removeItem('expiration');
         localStorage.removeItem('userId');
+        localStorage.removeItem('userName');
     }
 
     private getAuthData() {

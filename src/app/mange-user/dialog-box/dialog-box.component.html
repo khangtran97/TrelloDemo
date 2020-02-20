@@ -1,0 +1,42 @@
+<h1 mat-dialog-title>Row Action :: <strong>{{action}}</strong></h1>
+<div mat-dialog-content>
+    <table class="edit-content">
+        <tr>
+            <td>
+                <mat-form-field *ngIf="action != 'Delete'; else elseTemplate">
+                    <input placeholder="{{action}} First Name" matInput [(ngModel)]="local_data.firstName">
+                </mat-form-field>
+            </td>
+            <td>
+                <mat-form-field *ngIf="action != 'Delete'" [ngStyle]="{'margin-left': '30px'}">
+                    <input placeholder="{{action}} Last name" matInput [(ngModel)]="local_data.lastName">
+                </mat-form-field>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <mat-form-field *ngIf="action != 'Delete'">
+                    <input placeholder="{{action}} Address" matInput [(ngModel)]="local_data.address">
+                </mat-form-field>
+            </td>
+            <td>
+                <mat-form-field *ngIf="action != 'Delete'" [ngStyle]="{'margin-left': '30px'}">
+                    <mat-label>Select an option</mat-label>
+                    <mat-select [(ngModel)]="selectedRole" (selectionChange)="selectionChange()">
+                        <mat-option *ngFor="let role of roleList" [value]="role">{{role.role}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <!-- <mat-form-field *ngIf="action != 'Delete'" [ngStyle]="{'margin-left': '30px'}">
+                    <input placeholder="{{action}} Role" matInput [(ngModel)]="local_data.role">
+                </mat-form-field> -->
+            </td>
+        </tr>
+    </table>
+  <ng-template #elseTemplate>
+    Sure to delete <b>{{local_data.userName}}</b>?
+  </ng-template>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="doAction()">{{action}}</button>
+  <button mat-button (click)="closeDialog()" mat-flat-button color="warn">Cancel</button>
+</div>
