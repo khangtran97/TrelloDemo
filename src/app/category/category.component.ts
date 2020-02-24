@@ -9,6 +9,9 @@ import { AuthService } from '../auth/auth.service';
 import { Router } from '@angular/router';
 import { User } from '../register/user.model';
 import { UserService } from '../register/user.service';
+import { PermissionService } from '../auth/permission.service';
+import { MatDialog } from '@angular/material';
+import { DialogBoxComponent } from '../mange-user/dialog-box/dialog-box.component';
 
 class ViewCategory implements Category {
     id: string;
@@ -34,7 +37,6 @@ export class CategoryComponent implements OnInit, OnDestroy, AfterViewInit {
     inputCategForm: FormGroup;
     categories: ViewCategory[] = [];
     private categoriesSub: Subscription;
-    private user: User[];
     userInfo: User;
 
 
@@ -44,7 +46,9 @@ export class CategoryComponent implements OnInit, OnDestroy, AfterViewInit {
                 private elemetRef: ElementRef,
                 private authService: AuthService,
                 private userService: UserService,
-                private router: Router) { }
+                private router: Router,
+                private perService: PermissionService,
+                public dialog: MatDialog) { }
 
     ngOnInit() {
         this.inputCategForm = this.fb.group({
@@ -64,11 +68,50 @@ export class CategoryComponent implements OnInit, OnDestroy, AfterViewInit {
             if (role && role === 'ADMIN') {
                 this.isAdmin = true;
             }
+            this.userInfo = user;
+        });
+    }
+
+    openDialog(action, obj, index?) {
+        obj.action = action;
+        obj.index = index;
+        const dialogRef = this.dialog.open(DialogBoxComponent, {
+            width: '587px',
+            data: obj
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result.event === 'Edit') {
+                result.data['id'] = result.data['_id'];
+                delete result.data['_id'];
+                this.editUser(result.data);
+            }
+        });
+    }
+
+    editUser(editData) {
+        this.userService.updateUser(editData).subscribe(() => {
+            this.userInfo['id'] = this.userInfo['_id'];
+            delete this.userInfo['_id'];
+            this.userService.getUserById(this.userInfo.id).subscribe((user: User) => {
+                this.userInfo = user;
+            });
         });
     }
 
     ngAfterViewInit() {
         this.elemetRef.nativeElement.ownerDocument.body.style.backgroundColor = 'darkgrey';
+    }
+
+    canReadWrite() {
+        const isAdmin = this.perService.IsAdmin();
+        const isMember = this.perService.IsMember();
+
+        if (isAdmin || isMember) {
+            return true;
+        }
+
+        return false;
     }
 
     onAddCategory() {
@@ -87,16 +130,14 @@ export class CategoryComponent implements OnInit, OnDestroy, AfterViewInit {
     onEditCategory(index, newvalue) {
         this.categories[index].title = newvalue;
         this.categories[index].editing = false;
-        this.categService.updateCategory(this.categories[index].id, newvalue);
+        this.categService.updateCategory(this.categories[index].id, newvalue).subscribe();
     }
 
     onCreate() {
-        this.categService.createCategory(
-            this.inputCategForm.get('title').value,
-            () => {
-                this.categService.getCategory();
-                this.onCancelCategory();
-            });
+        this.categService.createCategory(this.inputCategForm.get('title').value).subscribe(() => {
+            this.categService.getCategory();
+            this.onCancelCategory();
+        });
     }
 
     onDelete(index, categId) {

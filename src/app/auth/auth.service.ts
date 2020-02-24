@@ -4,6 +4,7 @@ import { User } from '../register/user.model';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router';
 import { map } from 'rxjs/operators';
+import * as jwt_decode from 'jwt-decode';
 
 @Injectable({ providedIn: 'root'})
 export class AuthService {
@@ -64,7 +65,6 @@ export class AuthService {
                     this.isAuthenticated = true;
                     this.userId = response.userId;
                     this.userName = response.userName;
-                    // this.role.next(response.role);
                     this.role = response.role;
                     this.authStautusListener.next(true);
                     const now = new Date();
@@ -73,6 +73,10 @@ export class AuthService {
                     this.router.navigate(['/category']);
                 }
             });
+    }
+
+    decode() {
+        return jwt_decode(localStorage.getItem('token'));
     }
 
     autoAuthUser() {

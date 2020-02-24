@@ -10,6 +10,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { VoteCardCommentService } from './vote.service';
 import { Vote } from './vote.model';
 import { filter } from 'rxjs/operators';
+import { PermissionService } from 'src/app/auth/permission.service';
 
 class ViewCard implements Card {
     id: string;
@@ -42,10 +43,11 @@ export class CardComponent implements OnInit, OnDestroy {
     @Input('category') category: Category;
 
     constructor(private cardService: CardService,
-        private fb: FormBuilder,
-        private modalService: NgbModal,
-        private authService: AuthService,
-        private voteCardService: VoteCardCommentService) { }
+                private fb: FormBuilder,
+                private modalService: NgbModal,
+                private authService: AuthService,
+                private voteCardService: VoteCardCommentService,
+                private perService: PermissionService) { }
 
     ngOnInit() {
         this.inputCardForm = this.fb.group({
@@ -75,6 +77,17 @@ export class CardComponent implements OnInit, OnDestroy {
             }
             this.cards = arrayCard.filter(card => card.category === this.category.id);
         });
+    }
+
+    canReadWrite() {
+        const isAdmin = this.perService.IsAdmin();
+        const isMember = this.perService.IsMember();
+
+        if (isAdmin || isMember) {
+            return true;
+        }
+
+        return false;
     }
 
     voteCard(index, cardId, categoryId) {

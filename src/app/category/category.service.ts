@@ -3,22 +3,24 @@ import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { Category } from './category.model';
 import { Subject } from 'rxjs';
+import { HttpConnector } from '../http-connector';
 
 @Injectable({ providedIn: 'root' })
 export class CategoryService {
     categories: Category[] = [];
     public categoriesUpdated = new Subject<{ categories: Category[] }>();
 
-    constructor(private http: HttpClient) {}
+    constructor( private http: HttpClient) {}
 
     getCategory() {
+
         this.http.get<{message: string; categories: any}>(
             'http://localhost:3000/category'
         )
         .pipe(
-            map(categoryData => {
+            map((data: any) => {
                 return {
-                    categories: categoryData.categories.map(categ => {
+                    categories: data.categories.map(categ => {
                         return {
                             id: categ._id,
                             title: categ.title
@@ -35,13 +37,10 @@ export class CategoryService {
         });
     }
 
-    createCategory(title: string, callback) {
+    createCategory(title: string) {
         const categ: Category = {id: null, title: title };
-        this.http
-        .post<{ message: string, category: Category}>('http://localhost:3000/category', categ)
-        .subscribe(responseData => {
-            callback();
-        });
+        return this.http
+        .post<{ message: string, category: Category}>('http://localhost:3000/category', categ);
     }
 
     getCategUpdateListener() {
@@ -59,8 +58,7 @@ export class CategoryService {
             id: Id,
             title: Title
         };
-        this.http
-            .put('http://localhost:3000/category/' + Id, categData)
-            .subscribe(response => {});
+        return this.http
+            .put('http://localhost:3000/category/' + Id, categData);
     }
 }

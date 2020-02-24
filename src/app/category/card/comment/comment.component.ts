@@ -9,6 +9,7 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { User } from 'src/app/register/user.model';
 import { LikeCommentService } from './like.service';
 import { Like } from './like.model';
+import { PermissionService } from 'src/app/auth/permission.service';
 
 class ViewComment implements Comment {
     id: string;
@@ -43,7 +44,8 @@ export class CommentComponent implements OnInit, OnDestroy {
     constructor(private commentService: CommentService,
                 private fb: FormBuilder,
                 private authService: AuthService,
-                private likeService: LikeCommentService) {}
+                private likeService: LikeCommentService,
+                private perService: PermissionService) {}
 
     ngOnInit() {
         this.inputMemberCardForm = this.fb.group({
@@ -74,6 +76,17 @@ export class CommentComponent implements OnInit, OnDestroy {
             }
             this.comments = arrayComment.filter(comment => comment.card === this.card.id);
         });
+    }
+
+    canReadWrite() {
+        const isAdmin = this.perService.IsAdmin();
+        const isMember = this.perService.IsMember();
+
+        if (isAdmin || isMember) {
+            return true;
+        }
+
+        return false;
     }
 
     ShowAddComment() {

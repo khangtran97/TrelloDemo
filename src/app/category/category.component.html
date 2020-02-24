@@ -11,7 +11,7 @@
         <div class="user-icon">
             <button mat-button [matMenuTriggerFor]="menu" (click)="isEditUser()">DT</button>
             <mat-menu class="modify-user" #menu="matMenu">
-                <button mat-menu-item >Manage Profile</button>
+                <button mat-menu-item (click)="openDialog('Edit', userInfo)">Manage Profile</button>
                 <button mat-menu-item (click)="logout()">Logout</button>
             </mat-menu>
         </div>
@@ -24,11 +24,16 @@
                     <div class="list-wrapper" *ngFor="let categ of categories; index as i" cdkDrag>
                         <div class="list-header">
                             <div class="column">
+                                <div *ngIf="!canReadWrite(); else editCateg">
+                                    <p class="category-title">{{ categ.title }}</p>
+                                </div>
+                                <ng-template #editCateg>
+                                    <p class="category-title" *ngIf="!categories[i].editing" (click)="onEditingCategory(i)">{{ categ.title }}</p>
+                                    <input class="inputEdit" *ngIf="categories[i].editing" [(ngModel)]="categories[i].title" (focusout)="onEditCategory(i,categ.title)" autofocus>
+                                </ng-template>
+                                
 
-                                <p class="category-title" *ngIf="!categories[i].editing" (click)="onEditingCategory(i)">{{ categ.title }}</p>
-                                <input class="inputEdit" *ngIf="categories[i].editing" [(ngModel)]="categories[i].title" (focusout)="onEditCategory(i,categ.title)" autofocus>
-
-                                <div class="list-option">
+                                <div class="list-option" *ngIf="canReadWrite()">
                                     <div class="delete-list-btn" (click)="onDelete(i,categ.id)"><mat-icon>delete</mat-icon></div>
                                 </div>
                                 <app-card [category]="categ"></app-card>                          
@@ -37,7 +42,7 @@
                     </div>                    
                 </div>
                 <div class="add-list-wrapper">
-                    <ng-container *ngIf="!isShowAddList">
+                    <ng-container *ngIf="!isShowAddList && canReadWrite()">
                         <button class="btn open-add-list" (click)="onAddCategory()" *ngIf="categories.length < 10">
                             <span class="placeholder">
                                 <mat-icon class="add-icon">add</mat-icon>

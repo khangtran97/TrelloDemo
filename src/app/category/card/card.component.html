@@ -2,11 +2,21 @@
     <div class="card-list-name" *ngFor="let card of cards;let i = index" cdkDrag>
         <a class="card-title">
             <div class="card-title-info">
-                <span class="icon-edit-card" *ngIf="!cards[i].editing" (click)="onEditingCard(i)"><i class="material-icons">edit</i></span>
-                <div class="list-card-details" *ngIf="!cards[i].editing" (click)="openLg(cardmodal)">
-                    <span class="list-card-title">
+                <span class="icon-edit-card" *ngIf="!cards[i].editing && canReadWrite()" (click)="onEditingCard(i)"><i class="material-icons">edit</i></span>
+                <div class="list-card-details" *ngIf="!cards[i].editing">
+                    <span class="list-card-title" (click)="openLg(cardmodal)">
                         {{card.title}}
                     </span>
+                    <!-- <div *ngIf="!canReadWrite(); else cardtitle">
+                        <span class="list-card-title">
+                            {{card.title}}
+                        </span>
+                    </div>
+                    <ng-template #cardtitle>
+                        <span class="list-card-title" (click)="openLg(cardmodal)">
+                            {{card.title}}
+                        </span>
+                    </ng-template>                 -->
                 </div>
                 <div class="vote-card" *ngIf="!cards[i].editing">
                     <span class="icon-vote-card" (click)="voteCard(i,card.id,category.id)"><i class="material-icons">thumb_up</i></span>
@@ -54,7 +64,7 @@
             </ng-template>   
         </div>
     </div>
-    <div class="card-composer">
+    <div class="card-composer" *ngIf="canReadWrite()">
         <ng-container *ngIf="!isShowAddCard">
             <button class="btn open-add-card" (click)="onAddCard()">
                 <span class="placeholder">

@@ -11,6 +11,8 @@ const Category = require('./models/category');
 const Card = require('./models/card');
 const CardComment = require('./models/comment');
 const Vote = require('./models/vote');
+const admin = 'ADMIN';
+const member = 'MEMBER';
 const UserSchema = new mongoose.Schema({
     userName: { type: String, require: true },
     password: { type: String, require: true },
@@ -58,7 +60,7 @@ app.post('/register', async (req, res, next) => {
                 if (err) { return next(err); }
                 const user = new UserModel(req.body);
                 user.password = hash;
-                if(user.userName === 'admin@gmail.com') { user.role = 'ADMIN' }
+                if (user.userName === 'admin@gmail.com') { user.role = 'ADMIN' }
                 user.save((err, result) => {
                     if (err) { return res.json({ err }); }
                     res.status(200).json({ user: result });
@@ -90,7 +92,7 @@ app.route('/login').post((req, res) => {
                 });
             }
             const token = jwt.sign(
-                { email: fetchedUser.userName, userId: fetchedUser._id },
+                { email: fetchedUser.userName, userId: fetchedUser._id, role: fetchedUser.role },
                 'secret_this_should_be_longer',
                 { expiresIn: '1h' }
             );
@@ -114,63 +116,73 @@ app.route('/login').post((req, res) => {
 
 app.get('/user/:id', (req, res) => {
     UserModel.findOne({ '_id': req.params.id }).then(user => {
-        if(user) {
+        if (user) {
             res.status(200).json(user)
         } else {
             return res.status(404).json({
                 message: 'User not found with id ' + req.params.id
             });
-        }        
+        }
     })
 });
 
 app.get('/user', (req, res) => {
     UserModel.find().then(data => {
         res.status(200).json({
-            message: 'Categories retrieved successfully!',
+            message: 'Users retrieved successfully!',
             users: data
         })
     })
 })
 
-app.put('/user/:id', (req, res) => {
-    UserModel.findByIdAndUpdate(req.params.id, req.body).then(result => {
-        if (!result) {
-            return res.status(404).json({
-                message: 'User not found with id ' + req.body.id
+app.put('/user/:id', checkAuth, (req, res) => {
+    if (req.userData.role === admin || req.userData.role === member) {
+        UserModel.findByIdAndUpdate(req.params.id, req.body).then(result => {
+            if (!result) {
+                return res.status(404).json({
+                    message: 'User not found with id ' + req.body.id
+                });
+            }
+            res.status(200).json({ message: 'User updated succeccfully!' });
+        }).catch(err => {
+            if (err.kind === 'ObjectId' || err.name === 'NotFound') {
+                return res.status(404).json({
+                    message: 'User not found with id ' + req.body.id
+                });
+            }
+            return res.status(500).json({
+                message: 'Could not update User with id ' + req.body.id
             });
-        }
-        res.status(200).json({ message: 'User updated succeccfully!' });
-    }).catch(err => {
-        if (err.kind === 'ObjectId' || err.name === 'NotFound') {
-            return res.status(404).json({
-                message: 'User not found with id ' + req.body.id
-            });
-        }
-        return res.status(500).json({
-            message: 'Could not update User with id ' + req.body.id
         });
-    });
+    } else {
+        return res.status(403).json({ message: 'Not Authorized!' });
+    }
+
 })
 
-app.delete('/user/:id', (req, res) => {
-    UserModel.deleteOne({ _id: req.params.id }).then(result => {
-        if (!result) {
-            return res.status(404).json({
-                message: 'card not found with id ' + req.body.id
+app.delete('/user/:id', checkAuth, (req, res) => {
+    if (req.userData.role === admin) {
+        UserModel.deleteOne({ _id: req.params.id }).then(result => {
+            if (!result) {
+                return res.status(404).json({
+                    message: 'card not found with id ' + req.body.id
+                });
+            }
+            res.status(200).json({ message: 'User deleted successfully!' });
+        }).catch(err => {
+            if (err.kind === 'ObjectId' || err.name === 'NotFound') {
+                return res.status(404).json({
+                    message: 'User not found with id ' + req.body.id
+                });
+            }
+            return res.status(500).json({
+                message: 'Could not delete User with id ' + req.body.id
             });
-        }
-        res.status(200).json({ message: 'User deleted successfully!' });
-    }).catch(err => {
-        if (err.kind === 'ObjectId' || err.name === 'NotFound') {
-            return res.status(404).json({
-                message: 'User not found with id ' + req.body.id
-            });
-        }
-        return res.status(500).json({
-            message: 'Could not delete User with id ' + req.body.id
         });
-    });
+    } else {
+        return res.status(403).json({ message: 'Not Authorized!' });
+    }
+    
 })
 
 
@@ -224,52 +236,63 @@ app.route('/category/:id').delete((req, res, next) => {
     });
 });
 
-app.route('/category/:id').put((req, res) => {
-    Category.findByIdAndUpdate(req.params.id, req.body).then(result => {
-        if (!result) {
-            return res.status(404).json({
-                message: 'Category not found with id ' + req.body.id
+app.route('/category/:id').put(checkAuth, (req, res) => {
+    if (req.userData.role === admin || req.userData.role === member) {
+        Category.findByIdAndUpdate(req.params.id, req.body).then(result => {
+            if (!result) {
+                return res.status(404).json({
+                    message: 'Category not found with id ' + req.body.id
+                });
+            }
+            res.status(200).json({ message: 'Category updated succeccfully!' });
+        }).catch(err => {
+            if (err.kind === 'ObjectId' || err.name === 'NotFound') {
+                return res.status(404).json({
+                    message: 'Category not found with id ' + req.body.id
+                });
+            }
+            return res.status(500).json({
+                message: 'Could not update category with id ' + req.body.id
             });
-        }
-        res.status(200).json({ message: 'Category updated succeccfully!' });
-    }).catch(err => {
-        if (err.kind === 'ObjectId' || err.name === 'NotFound') {
-            return res.status(404).json({
-                message: 'Category not found with id ' + req.body.id
-            });
-        }
-        return res.status(500).json({
-            message: 'Could not update category with id ' + req.body.id
         });
-    });
+    } else {
+        return res.status(403).json({ message: 'Not Authorized!' });
+    }    
 });
 
 
 
 // Card
-app.route('/card').post((req, res) => {
+app.route('/card').post(checkAuth, (req, res) => {
     const card = new Card({
         title: req.body.title,
         category: req.body.category,
         description: req.body.description,
         comment: req.body.comment
     });
-    card.save().then(createdCard => {
-        res.status(201).json({
-            message: 'Card added succesfully!',
-            card: {
-                id: createdCard._id,
-                title: createdCard.title,
-                description: createdCard.description,
-                comment: createdCard.comment
-            }
-        });
-    }).catch(err => {
-        console.log(err),
-            res.status(500).json({
-                error: err
+    console.log(req.userData.role);
+    return res.status(200).json({});
+    if (req.userData.role === admin || req.userData.role === member) {
+        card.save().then(createdCard => {
+            res.status(201).json({
+                message: 'Card added succesfully!',
+                card: {
+                    id: createdCard._id,
+                    title: createdCard.title,
+                    description: createdCard.description,
+                    comment: createdCard.comment
+                }
             });
-    });
+        }).catch(err => {
+            console.log(err),
+                res.status(500).json({
+                    error: err
+                });
+        });
+    } else {
+        return res.status(403).json({ message: 'Not authorized!' });
+    }
+
 });
 
 function getCardList() {
@@ -312,44 +335,53 @@ app.route('/card').get((req, res) => {
     });
 });
 
-app.route('/card/:id').put((req, res) => {
-    Card.findByIdAndUpdate(req.params.id, req.body).then(result => {
-        if (!result) {
-            return res.status(404).json({
-                message: 'Card not found with id ' + req.body.id
+app.route('/card/:id').put(checkAuth, (req, res) => {
+    if (req.userData.role === admin || req.userData.role === member) {
+        Card.findByIdAndUpdate(req.params.id, req.body).then(result => {
+            if (!result) {
+                return res.status(404).json({
+                    message: 'Card not found with id ' + req.body.id
+                });
+            }
+            res.status(200).json({ message: 'Card updated succeccfully!' });
+        }).catch(err => {
+            if (err.kind === 'ObjectId' || err.name === 'NotFound') {
+                return res.status(404).json({
+                    message: 'Card not found with id ' + req.body.id
+                });
+            }
+            return res.status(500).json({
+                message: 'Could not update Card with id ' + req.body.id
             });
-        }
-        res.status(200).json({ message: 'Card updated succeccfully!' });
-    }).catch(err => {
-        if (err.kind === 'ObjectId' || err.name === 'NotFound') {
-            return res.status(404).json({
-                message: 'Card not found with id ' + req.body.id
-            });
-        }
-        return res.status(500).json({
-            message: 'Could not update Card with id ' + req.body.id
         });
-    });
+    } else {
+        return res.status(403).json({ message: 'Not Authorized!' });
+    }
+
 });
 
-app.route('/card/:id').delete((req, res, next) => {
-    Card.deleteOne({ _id: req.params.id }).then(result => {
-        if (!result) {
-            return res.status(404).json({
-                message: 'category not found with id ' + req.body.id
+app.route('/card/:id').delete(checkAuth, (req, res, next) => {
+    if (req.userData.role === admin || req.userData.role === member) {
+        Card.deleteOne({ _id: req.params.id }).then(result => {
+            if (!result) {
+                return res.status(404).json({
+                    message: 'category not found with id ' + req.body.id
+                });
+            }
+            res.status(200).json({ message: 'category deleted successfully!' });
+        }).catch(err => {
+            if (err.kind === 'ObjectId' || err.name === 'NotFound') {
+                return res.status(404).json({
+                    message: 'Category not found with id ' + req.body.id
+                });
+            }
+            return res.status(500).json({
+                message: 'Could not delete category with id ' + req.body.id
             });
-        }
-        res.status(200).json({ message: 'category deleted successfully!' });
-    }).catch(err => {
-        if (err.kind === 'ObjectId' || err.name === 'NotFound') {
-            return res.status(404).json({
-                message: 'Category not found with id ' + req.body.id
-            });
-        }
-        return res.status(500).json({
-            message: 'Could not delete category with id ' + req.body.id
         });
-    });
+    } else {
+        return res.status(403).json({ message: 'Not Authorized!' });
+    }
 });
 
 
@@ -371,30 +403,34 @@ app.route('/comment').get((req, res) => {
     });
 });
 
-app.route('/comment').post((req, res, next) => {
+app.route('/comment').post(checkAuth, (req, res, next) => {
     const comment = new CardComment({
         content: req.body.content,
         creator: req.body.creator,
         card: req.body.card,
         user: req.body.user
     });
-    comment.save().then(createdComment => {
-        res.status(201).json({
-            message: 'Comment added succesfully!',
-            card: {
-                id: createdComment._id,
-                content: createdComment.content,
-                creator: createdComment.creator,
-                card: createdComment.card,
-                user: createdComment.user
-            }
-        });
-    }).catch(err => {
-        console.log(err),
-            res.status(500).json({
-                error: err
+    if (req.userData.role === admin || req.userData.role === member) {
+        comment.save().then(createdComment => {
+            res.status(201).json({
+                message: 'Comment added succesfully!',
+                card: {
+                    id: createdComment._id,
+                    content: createdComment.content,
+                    creator: createdComment.creator,
+                    card: createdComment.card,
+                    user: createdComment.user
+                }
             });
-    });
+        }).catch(err => {
+            console.log(err),
+                res.status(500).json({
+                    error: err
+                });
+        });
+    } else {
+        return res.status(403).json({ message: 'Not Authorized!' });
+    }
 });
 
 app.route('/comment/:id').delete(checkAuth, (req, res, next) => {

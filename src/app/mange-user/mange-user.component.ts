@@ -29,7 +29,7 @@ export class ManageUserComponent implements OnInit, AfterViewInit {
               public dialog: MatDialog) {
   }
 
-  openDialog(action, obj, index) {
+  openDialog(action, obj, index?) {
     obj.action = action;
     obj.index = index;
     const dialogRef = this.dialog.open(DialogBoxComponent, {

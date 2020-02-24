@@ -42,6 +42,7 @@ import { LoaderService } from './loader/loader.service';
 import { LoaderInterceptor } from './loader/loader.interceptor';
 import { ManageUserComponent } from './mange-user/mange-user.component';
 import { DialogBoxComponent } from './mange-user/dialog-box/dialog-box.component';
+import { HttpConnector } from './http-connector';
 
 @NgModule({
   declarations: [
@@ -86,10 +87,11 @@ import { DialogBoxComponent } from './mange-user/dialog-box/dialog-box.component
   entryComponents: [
     DialogBoxComponent
   ],
-  providers: [LoaderService,
-              {provide: HTTP_INTERCEPTORS, useClass: LoaderInterceptor, multi: true},
-              {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
-              AuthService],
+  providers: [HttpConnector,
+    LoaderService,
+    { provide: HTTP_INTERCEPTORS, useClass: LoaderInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    AuthService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
