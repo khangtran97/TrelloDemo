@@ -22,7 +22,7 @@ export class AuthService {
 
     createUser(email: string, password: string) {
       const authData: User = {id: null, userName: email, password: password, firstName: '', lastName: '', address: '', role: ''};
-      this.http.post('http://localhost:3000/register', authData)
+      this.http.post('http://localhost:3000/user/register', authData)
           .subscribe(response => {
             //   console.log(response);
           });
@@ -55,7 +55,7 @@ export class AuthService {
             expiresIn: number,
             userId: string,
             userName: string,
-            role: string}>('http://localhost:3000/login', authData)
+            role: string}>('http://localhost:3000/user/login', authData)
             .subscribe(response => {
                 const token = response.token;
                 this.token = token;
@@ -106,7 +106,7 @@ export class AuthService {
     }
 
     getUserNameById(id) {
-        this.http.get<{ message: string, user: User}>('http://localhost:3000/login/' + id).subscribe(userData => {
+        this.http.get<{ message: string, user: User}>('http://localhost:3000/user/login/' + id).subscribe(userData => {
             this.userName = userData.user.userName;
             this.userNameListener.next(this.userName);
         });
