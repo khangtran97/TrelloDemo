@@ -2,10 +2,14 @@ import { Injectable, OnDestroy, OnInit, Input } from '@angular/core';
 import { Card } from './card.model';
 import { HttpClient } from '@angular/common/http';
 import { CategoryService } from '../category.service';
-import { Subscription, Subject, BehaviorSubject, Observable } from 'rxjs';
-import { map, mergeMap } from 'rxjs/operators';
+import { Subscription, Subject } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Category } from '../category.model';
 import { Vote } from './vote.model';
+import { environment } from '../../../environments/environment';
+
+const BACKEND_URL =  environment.apiUrl + '/card/';
+
 
 // class ViewCard implements Card {
 //     id: string;
@@ -29,7 +33,7 @@ export class CardService {
 
     getCards() {
         return this.http.get<{message: string; cards: any}>(
-            'http://localhost:3000/card'
+            BACKEND_URL
         )
         .pipe(
             map(cardData => {
@@ -56,7 +60,7 @@ export class CardService {
     addCard(title: string, categorySelected: Category, callback) {
         const card = { id: null, title: title, message: null, commnent: null, category: categorySelected.id };
         this.http
-        .post<{message: string, card: Card}>('http://localhost:3000/card', card)
+        .post<{message: string, card: Card}>(BACKEND_URL, card)
         .subscribe(responseData => {
             callback();
         });
@@ -72,7 +76,7 @@ export class CardService {
             category: category.id
         };
         this.http
-            .put('http://localhost:3000/card/' + Id, cardData)
+            .put(BACKEND_URL + Id, cardData)
             .subscribe(response => {
                 callback();
             });
@@ -80,6 +84,6 @@ export class CardService {
 
     deleteCard(cardId: string) {
         return this.http
-          .delete('http://localhost:3000/card/' + cardId);
+          .delete(BACKEND_URL + cardId);
     }
 }

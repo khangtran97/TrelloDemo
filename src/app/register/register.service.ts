@@ -3,6 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
+
+
+const BACKEND_URL =  environment.apiUrl + '/user/';
 
 @Injectable({ providedIn: "root" })
 export class RegisterService {
@@ -14,7 +18,7 @@ export class RegisterService {
     createUser(userName: string, password: string) {
         const user: User = {id: null, userName: userName, password: password, firstName: null, lastName: null, address: null, role: null};
         this.http
-        .post<{ message: string}>('http://localhost:3000/register', user)
+        .post<{ message: string}>(BACKEND_URL + '/register', user)
         .subscribe(responseData => {
             this.users.push(user);
             this.usersUpdated.next([...this.users]);

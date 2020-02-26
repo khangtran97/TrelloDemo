@@ -157,9 +157,8 @@ export class CommentComponent implements OnInit, OnDestroy {
             this.inputEditCommentForm.get('textCommentEdit').value,
             localStorage.getItem('userName'),
             card,
-            this.userId,
-            () => {
-                this.commentService.getComments();
+            this.userId).subscribe(() => {
+                this.filterComment();
             });
     }
 

@@ -10,7 +10,9 @@ const likeRoutes = require('./routes/like');
 
 
 const app = express();
-const connectStr = 'mongodb+srv://khang_1:5HyIHdbXVJp5eCYp@cluster0-8f4qo.mongodb.net/trello-angular?retryWrites=true&w=majority'
+const connectStr = 'mongodb+srv://khang_1:' + 
+                    process.env.MONGO_ATLAS_PW + 
+                    '@cluster0-8f4qo.mongodb.net/trello-angular?retryWrites=true&w=majority'
 mongoose.connect(connectStr)
     .then(() => {
         console.log('Connected to database');

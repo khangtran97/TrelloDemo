@@ -4,20 +4,24 @@ import { Subject } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { map } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
-@Injectable({ providedIn: "root" })
+
+const BACKEND_URL =  environment.apiUrl + '/user/';
+
+@Injectable({ providedIn: 'root' })
 export class UserService {
 
     constructor(private http: HttpClient,
-        private router: Router) { }
+                private router: Router) { }
 
     getUserById(userId: string) {
-        return this.http.get(`http://localhost:3000/user/${userId}`);
+        return this.http.get(BACKEND_URL + userId);
     }
 
     getUsers() {
         return this.http.get<{ message: string; users: any }>(
-            'http://localhost:3000/user'
+            BACKEND_URL
         )
             .pipe(
                 map(userData => {
@@ -50,11 +54,11 @@ export class UserService {
             role: user.role
         };
         return this.http
-            .put('http://localhost:3000/user/' + userData.id, userData);
+            .put(BACKEND_URL + userData.id, userData);
     }
 
     deleteUser(userId: string) {
         return this.http
-            .delete(`http://localhost:3000/user/${userId}`);
+            .delete(BACKEND_URL + userId);
     }
 }

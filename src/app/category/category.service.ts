@@ -4,6 +4,9 @@ import { map } from 'rxjs/operators';
 import { Category } from './category.model';
 import { Subject } from 'rxjs';
 import { HttpConnector } from '../http-connector';
+import { environment } from '../../environments/environment';
+
+const BACKEND_URL =  environment.apiUrl + '/category/';
 
 @Injectable({ providedIn: 'root' })
 export class CategoryService {
@@ -15,7 +18,7 @@ export class CategoryService {
     getCategory() {
 
         this.http.get<{message: string; categories: any}>(
-            'http://localhost:3000/category'
+            BACKEND_URL
         )
         .pipe(
             map((data: any) => {
@@ -40,7 +43,7 @@ export class CategoryService {
     createCategory(title: string) {
         const categ: Category = {id: null, title: title };
         return this.http
-        .post<{ message: string, category: Category}>('http://localhost:3000/category', categ);
+        .post<{ message: string, category: Category}>(BACKEND_URL, categ);
     }
 
     getCategUpdateListener() {
@@ -49,7 +52,7 @@ export class CategoryService {
 
     deleteCategory(categId: string) {
         return this.http
-          .delete('http://localhost:3000/category/' + categId);
+          .delete(BACKEND_URL + categId);
     }
 
     updateCategory(Id: string, Title) {
@@ -59,6 +62,6 @@ export class CategoryService {
             title: Title
         };
         return this.http
-            .put('http://localhost:3000/category/' + Id, categData);
+            .put(BACKEND_URL + Id, categData);
     }
 }

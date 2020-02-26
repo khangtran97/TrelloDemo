@@ -3,8 +3,9 @@ import { Card } from '../card.model';
 import { HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { User } from 'src/app/register/user.model';
-import { createAotUrlResolver } from '@angular/compiler';
+import { environment } from '../../../../environments/environment';
+
+const BACKEND_URL =  environment.apiUrl + '/comment/';
 
 @Injectable({providedIn: 'root'})
 
@@ -15,7 +16,7 @@ export class CommentService {
 
     getComments() {
         return this.http.get<{message: string; comments: any}>(
-            'http://localhost:3000/comment'
+            BACKEND_URL
         )
         .pipe(
             map(commentData => {
@@ -42,13 +43,13 @@ export class CommentService {
     addComment(value, Creator, cardSelected: Card, userId, callback) {
         const comment = { id: null, content: value, creator: Creator, card: cardSelected.id, user: userId };
         this.http
-        .post<{message: string, comment: Comment}>('http://localhost:3000/comment', comment)
+        .post<{message: string, comment: Comment}>(BACKEND_URL, comment)
         .subscribe(responseData => {
             callback();
         });
     }
 
-    updateComment(Id: string, Content, Creator, card: Card, userId, callback) {
+    updateComment(Id: string, Content, Creator, card: Card, userId) {
         let commentData: any;
         commentData = {
             id: Id,
@@ -57,15 +58,12 @@ export class CommentService {
             card: card.id,
             user: userId
         };
-        this.http
-            .put('http://localhost:3000/comment/' + Id, commentData)
-            .subscribe(reponse => {
-                callback();
-            });
+        return this.http
+            .put(BACKEND_URL + Id, commentData);
     }
 
     deleteComment(commentId: string) {
         return this.http
-        .delete('http://localhost:3000/comment/' + commentId);
+        .delete(BACKEND_URL + commentId);
     }
 }

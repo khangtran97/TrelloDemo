@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs/operators';
 import { Comment } from './comment.model';
+import { environment } from '../../../../environments/environment';
+
+const BACKEND_URL =  environment.apiUrl + '/like/';
 
 class ViewComment implements Comment {
     id: string;
@@ -26,7 +28,7 @@ export class LikeCommentService {
             user: User
         };
         this.http
-            .post('http://localhost:3000/like', commentData)
+            .post(BACKEND_URL, commentData)
             .subscribe(response => {
                 callback();
             });
@@ -39,6 +41,6 @@ export class LikeCommentService {
             user: userId
         };
         return this.http
-        .put('http://localhost:3000/like/' + Id, data);
+        .put(BACKEND_URL + Id, data);
     }
 }

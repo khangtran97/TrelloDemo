@@ -2,8 +2,10 @@ import { Vote } from './vote.model';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Category } from '../category.model';
-import { map } from 'rxjs/operators';
 import { Card } from './card.model';
+import { environment } from '../../../environments/environment';
+
+const BACKEND_URL =  environment.apiUrl + '/vote/';
 
 class ViewCard implements Card {
     id: string;
@@ -33,7 +35,7 @@ export class VoteCardCommentService {
             user: User
         };
         this.http
-            .post('http://localhost:3000/vote', cardData)
+            .post(BACKEND_URL, cardData)
             .subscribe(response => {
                 callback();
             });
@@ -46,6 +48,6 @@ export class VoteCardCommentService {
             user: userId
         };
         return this.http
-        .put('http://localhost:3000/vote/' + Id, data);
+        .put(BACKEND_URL + Id, data);
     }
 }

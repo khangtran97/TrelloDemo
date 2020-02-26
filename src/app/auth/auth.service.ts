@@ -5,6 +5,9 @@ import { Subject, BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router';
 import { map } from 'rxjs/operators';
 import * as jwt_decode from 'jwt-decode';
+import { environment } from '../../environments/environment';
+
+const BACKEND_URL =  environment.apiUrl + '/user/';
 
 @Injectable({ providedIn: 'root'})
 export class AuthService {
@@ -22,7 +25,7 @@ export class AuthService {
 
     createUser(email: string, password: string) {
       const authData: User = {id: null, userName: email, password: password, firstName: '', lastName: '', address: '', role: ''};
-      this.http.post('http://localhost:3000/user/register', authData)
+      this.http.post(BACKEND_URL + 'register', authData)
           .subscribe(response => {
             //   console.log(response);
           });
@@ -55,7 +58,7 @@ export class AuthService {
             expiresIn: number,
             userId: string,
             userName: string,
-            role: string}>('http://localhost:3000/user/login', authData)
+            role: string}>(BACKEND_URL + 'login', authData)
             .subscribe(response => {
                 const token = response.token;
                 this.token = token;
@@ -106,7 +109,7 @@ export class AuthService {
     }
 
     getUserNameById(id) {
-        this.http.get<{ message: string, user: User}>('http://localhost:3000/user/login/' + id).subscribe(userData => {
+        this.http.get<{ message: string, user: User}>(BACKEND_URL + 'login/' + id).subscribe(userData => {
             this.userName = userData.user.userName;
             this.userNameListener.next(this.userName);
         });
