@@ -23,15 +23,9 @@
                 <mat-form-field *ngIf="action != 'Delete' && checkIsAdmin()" [ngStyle]="{'margin-left': '30px'}">
                     <mat-label>Select an option</mat-label>
                     <mat-select [(value)]="selectedRole" (selectionChange)="selectionChange()">
-                        <mat-option *ngFor="let role of roleList" [value]="role">{{role.role}}</mat-option>
+                        <mat-option *ngFor="let role of roleList" [value]="role.id">{{role.role}}</mat-option>
                     </mat-select>
-                    <!-- <mat-select [(ngModel)]="selectedRole" (selectionChange)="selectionChange()">
-                        <mat-option *ngFor="let role of roleList" [value]="role">{{role.role}}</mat-option>
-                    </mat-select> -->
                 </mat-form-field>
-                <!-- <mat-form-field *ngIf="action != 'Delete'" [ngStyle]="{'margin-left': '30px'}">
-                    <input placeholder="{{action}} Role" matInput [(ngModel)]="localData.role">
-                </mat-form-field> -->
             </td>
         </tr>
     </table>

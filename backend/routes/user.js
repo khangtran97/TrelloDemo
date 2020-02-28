@@ -7,6 +7,8 @@ const UserController = require('../controllers/user');
 
 router.post('/register', UserController.createUser);
 
+router.post('/sociallogin', )
+
 router.post('/login', UserController.userLogin);
 
 router.get('/:id', UserController.getUserById);

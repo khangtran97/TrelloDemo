@@ -11,12 +11,15 @@ import { AuthService } from 'src/app/auth/auth.service';
     styleUrls: ['./dialog-box.component.scss']
 })
 export class DialogBoxComponent {
-    selectedRole: Role;
+    selectedRole: number;
     roleList: Role[] = [
-        {role: ''},
-        {role: 'ADMIN'},
-        {role: 'MEMBER'},
-        {role: 'VIEW'}
+        {
+            id: 0,
+            role: ''
+        },
+        { id: 1, role: 'ADMIN' },
+        { id: 2, role: 'MEMBER' },
+        { id: 3, role: 'VIEW' }
     ];
     action: string;
     localData: any;
@@ -28,10 +31,16 @@ export class DialogBoxComponent {
         private authService: AuthService) {
         this.localData = { ...data };
         this.action = this.localData.action;
+        this.selectedRole = this.compareRole().id;
     }
 
     selectionChange() {
-        this.localData.role = this.selectedRole.role;
+        const roles = this.roleList.find(role => role.id === this.selectedRole);
+        this.localData.role = roles.role;
+    }
+
+    compareRole() {
+        return this.roleList.find(role => role.role === this.localData.role);
     }
 
     checkIsAdmin() {
@@ -50,4 +59,7 @@ export class DialogBoxComponent {
         this.dialogRef.close({ event: 'Cancel' });
     }
 
+    compareWithFn(role1: Role, role2: Role) {
+        return (!role1 && !role2) || (role1 && role2 && role1.role === role2.role);
+    }
 }
