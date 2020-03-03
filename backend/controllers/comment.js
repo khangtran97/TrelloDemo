@@ -1,4 +1,4 @@
-const CardComment = require('../models/comment');
+const CardComment = require('../schema/comment');
 const admin = 'ADMIN';
 const member = 'MEMBER';
 

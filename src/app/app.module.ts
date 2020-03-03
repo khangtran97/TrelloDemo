@@ -43,6 +43,12 @@ import { LoaderInterceptor } from './loader/loader.interceptor';
 import { ManageUserComponent } from './mange-user/mange-user.component';
 import { DialogBoxComponent } from './mange-user/dialog-box/dialog-box.component';
 import { HttpConnector } from './http-connector';
+import {
+  SocialLoginModule,
+  AuthServiceConfig,
+  GoogleLoginProvider
+} from 'angularx-social-login';
+import { getAuthServiceConfigs } from './socialloginConfig';
 
 @NgModule({
   declarations: [
@@ -82,12 +88,17 @@ import { HttpConnector } from './http-connector';
     DragDropModule,
     MaterialModule,
     NgxSpinnerModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    SocialLoginModule
   ],
   entryComponents: [
     DialogBoxComponent
   ],
-  providers: [HttpConnector,
+  providers: [
+    {
+      provide: AuthServiceConfig, useFactory: getAuthServiceConfigs
+    },
+    HttpConnector,
     LoaderService,
     { provide: HTTP_INTERCEPTORS, useClass: LoaderInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

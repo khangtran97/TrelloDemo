@@ -7,9 +7,9 @@ import { map } from 'rxjs/operators';
 import * as jwt_decode from 'jwt-decode';
 import { environment } from '../../environments/environment';
 
-const BACKEND_URL =  environment.apiUrl + '/user/';
+const BACKEND_URL = environment.apiUrl + '/user/';
 
-@Injectable({ providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
     private isAuthenticated = false;
     private token: string;
@@ -18,17 +18,16 @@ export class AuthService {
     private tokenTimer: any;
     private userId: string;
     private userName: string;
-    // public role =  new BehaviorSubject<string>('');
     role: string;
 
-    constructor(private http: HttpClient, private router: Router) {}
+    constructor(private http: HttpClient, private router: Router) { }
 
     createUser(email: string, password: string) {
-      const authData: User = {id: null, userName: email, password: password, firstName: '', lastName: '', address: '', role: ''};
-      this.http.post(BACKEND_URL + 'register', authData)
-          .subscribe(response => {
-            //   console.log(response);
-          });
+        const authData: User = { id: null, userName: email, password: password, firstName: '', lastName: '', address: '', role: '' };
+        this.http.post(BACKEND_URL + 'register', authData)
+            .subscribe(response => {
+                //   console.log(response);
+            });
     }
 
     getToken() {
@@ -51,14 +50,25 @@ export class AuthService {
         return this.authStautusListener.asObservable();
     }
 
+    sendToRestApiMethod(userData) {
+        this.http.post(BACKEND_URL + 'auth', userData).subscribe();
+    }
+
     login(email: string, password: string) {
-        const authData: User = {id: null, userName: email, password: password, firstName: null, lastName: null, address: null, role: null};
+        const authData: User = {
+            id: null,
+            userName: email,
+            password: password,
+            firstName: null, lastName: null,
+            address: null, role: null
+        };
         this.http.post<{
             token: string,
             expiresIn: number,
             userId: string,
             userName: string,
-            role: string}>(BACKEND_URL + 'login', authData)
+            role: string
+        }>(BACKEND_URL + 'login', authData)
             .subscribe(response => {
                 const token = response.token;
                 this.token = token;
@@ -109,7 +119,7 @@ export class AuthService {
     }
 
     getUserNameById(id) {
-        this.http.get<{ message: string, user: User}>(BACKEND_URL + 'login/' + id).subscribe(userData => {
+        this.http.get<{ message: string, user: User }>(BACKEND_URL + 'login/' + id).subscribe(userData => {
             this.userName = userData.user.userName;
             this.userNameListener.next(this.userName);
         });

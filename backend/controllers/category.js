@@ -1,4 +1,4 @@
-const Category = require('../models/category');
+const Category = require('../schema/category');
 const admin = 'ADMIN';
 const member = 'MEMBER';
 

@@ -1,9 +1,9 @@
-export interface SocialUser {
+export class SocialUser {
     id: string;
-    provider: string;
+    googleId: string;
     email: string;
     name: string;
-    image: string;
-    token?: string;
-    idToken?: string;
+    firstName: string;
+    lastName: string;
+    role: string;
 }

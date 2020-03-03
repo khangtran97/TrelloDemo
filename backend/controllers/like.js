@@ -1,4 +1,4 @@
-const CardComment = require('../models/comment');
+const CardComment = require('../schema/comment');
 
 exports.createLike = (req, res) => {
     CardComment.findOneAndUpdate(

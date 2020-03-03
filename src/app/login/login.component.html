@@ -23,7 +23,11 @@
                 </form>
                 <form class="signup-google">
                     <div class="login-separator">OR</div>
-                    <button type="button" class="google-button">Login in with Google</button>
+                    <button type="button" class="google-button" (click)="signinWithGoogle()">Login in with Google</button>
+                </form>
+                <form class="signup-google">
+                    <div class="login-separator">OR</div>
+                    <button type="button" class="google-button" (click)="logoutGG()">Logout in with Google</button>
                 </form>
                 <hr>
                 <ul class="bottom-form-link">

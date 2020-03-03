@@ -1,5 +1,4 @@
 const app = require('./app');
-// import { app } from './backend/app';
 const debug = require('debug')('node-angular');
 const http = require('http');
 

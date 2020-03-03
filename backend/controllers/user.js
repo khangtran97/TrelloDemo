@@ -36,9 +36,7 @@ exports.createUser = async (req, res, next) => {
     });
 }
 
-exports.socialLogin = (req, res) => {
 
-}
 
 exports.userLogin = (req, res) => {
     let fetchedUser;
